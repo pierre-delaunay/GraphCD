@@ -1,0 +1,23 @@
+<resources>
+    <string name="app_name">GraphCD</string>
+
+    <string name="graph_reinitialize">Réinitialiser le graph</string>
+    <string name="edge_modification_mode">Ajouter/modifier arc</string>
+    <string name="node_modification_mode">Ajouter/modifier un noeud</string>
+    <string name="move_mode">Déplacer un noeud/arc</string>
+
+    <string name="delete_node">Supprimer</string>
+    <string name="edit_thumbnail">Modifier l\'étiquette</string>
+    <string name="edit_size_node">Modifier la taille</string>
+    <string name="edit_color_node">Modifier la couleur</string>
+
+    <string name="title_node_menu">Modifier un noeud</string>
+    <string name="edit_thumbnail_hint">Nom de l\'étiquette</string>
+    <string name="edit_thumbnail_message">Entrer le nom de l\'étiquette</string>
+    <string name="color">Couleur</string>
+    <string name="edit_color">Modifier la couleur</string>
+    <string name="edit_size_message">Choisir une taille</string>
+
+    <string name="accept">OK</string>
+    <string name="cancel">Annuler</string>
+</resources>

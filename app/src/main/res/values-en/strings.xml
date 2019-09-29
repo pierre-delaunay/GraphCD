@@ -1,0 +1,22 @@
+<resources>
+    <string name="app_name">GraphCD</string>
+    <string name="graph_reinitialize">Reinitialize</string>
+    <string name="edge_modification_mode">Add/edit node</string>
+    <string name="node_modification_mode">Add/edit edge</string>
+    <string name="move_mode">Move node</string>
+
+    <string name="delete_node">Delete</string>
+    <string name="edit_thumbnail">Edit thumbnail</string>
+    <string name="edit_size_node">Edit size</string>
+    <string name="edit_color_node">Edit color</string>
+
+    <string name="title_node_menu">Edit a node</string>
+    <string name="edit_thumbnail_hint">Insert new name</string>
+    <string name="edit_thumbnail_message">New name</string>
+    <string name="edit_color">Edit color</string>
+    <string name="color">Color</string>
+    <string name="edit_size_message">Pick new size</string>
+
+    <string name="accept">OK</string>
+    <string name="cancel">Cancel</string>
+</resources>

@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context=".MainActivity">
+
+    <item android:id="@+id/graph_reinitialize"
+        android:title="@string/graph_reinitialize" />
+
+    <group
+        android:id="@+id/groupModification"
+        android:checkableBehavior="single">
+
+        <item android:id="@+id/node_addition_mode"
+            android:title="@string/node_modification_mode" />
+
+        <item android:id="@+id/node_modification_mode"
+            android:title="@string/edge_modification_mode" />
+
+        <item android:id="@+id/edge_modification_mode"
+            android:title="@string/move_mode" />
+    </group>
+
+</menu>
