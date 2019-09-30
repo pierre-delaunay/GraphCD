@@ -9,12 +9,6 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
-import android.graphics.LinearGradient;
-import android.graphics.RectF;
-import android.graphics.Shader;
-import android.graphics.drawable.Drawable;
-import android.graphics.drawable.ShapeDrawable;
-import android.graphics.drawable.shapes.RectShape;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.KeyEvent;
@@ -26,13 +20,8 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.NumberPicker;
-import android.widget.SeekBar;
 import android.widget.Toast;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import fr.istic.mob.graphcd.model.Edge;
 import fr.istic.mob.graphcd.model.Graph;
 import fr.istic.mob.graphcd.model.Node;
 import fr.istic.mob.graphcd.view.DrawableGraph;
@@ -213,7 +202,6 @@ public class MainActivity extends Activity implements View.OnTouchListener, View
 
     /**
      * Display the node menu after a long click on a node
-     * @pre editNode = true
      * @param context
      * @return boolean
      */
@@ -315,7 +303,7 @@ public class MainActivity extends Activity implements View.OnTouchListener, View
     {
         final AlertDialog.Builder d = new AlertDialog.Builder(context);
         LayoutInflater inflater = this.getLayoutInflater();
-        View dialogView = inflater.inflate(R.layout.size_options, null);
+        View dialogView = inflater.inflate(R.layout.node_size_numberpicker, null);
         d.setTitle(R.string.edit_size_node);
         d.setMessage(R.string.edit_size_message);
         d.setView(dialogView);

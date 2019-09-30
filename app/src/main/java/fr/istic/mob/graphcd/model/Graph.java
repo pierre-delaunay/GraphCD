@@ -49,7 +49,6 @@ public class Graph {
         nodes.add(new Node(890,120, "n1", Color.BLACK, 50));
         nodes.add(new Node(50,350, "n2", Color.CYAN, 50));
         nodes.add(new Node(750,450, "голубой узел", Color.CYAN, 50));
-
     }
 
     /**
@@ -85,5 +84,4 @@ public class Graph {
     public void deleteNode(Node node) {
         this.nodes.remove(node);
     }
-
 }

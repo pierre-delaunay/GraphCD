@@ -23,8 +23,6 @@ public class Edge {
      * Constructors
      */
 
-    public Edge() { }
-
     public Edge(Node startingNode, Node endingNode, String thumbnail, int color) {
         this.startingNode = startingNode;
         this.endingNode = endingNode;
@@ -104,7 +102,4 @@ public class Edge {
         pathMeasure.getPosTan(pathMeasure.getLength() * 0.50f, middlePoint, tangent);
         this.midPoint.set(middlePoint[0], middlePoint[1]);
     }
-
-
-
 }
