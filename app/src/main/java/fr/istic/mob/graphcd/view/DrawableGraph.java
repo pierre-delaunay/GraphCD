@@ -1,21 +1,12 @@
 package fr.istic.mob.graphcd.view;
 
-import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.ColorFilter;
 import android.graphics.Paint;
 import android.graphics.PixelFormat;
-import android.graphics.PorterDuff;
-import android.graphics.RectF;
 import android.graphics.drawable.Drawable;
 import android.support.annotation.NonNull;
-import android.util.AttributeSet;
-import android.util.Log;
-import android.view.MotionEvent;
-import android.view.View;
-import android.graphics.Path;
-import android.widget.Toast;
 
 import fr.istic.mob.graphcd.model.Edge;
 import fr.istic.mob.graphcd.model.Graph;
@@ -23,12 +14,39 @@ import fr.istic.mob.graphcd.model.Node;
 
 public class DrawableGraph extends Drawable {
 
-    private Paint backgroundPaint, nodePaint, textPaint, edgePaint;
+    private Paint backgroundPaint, nodePaint, nodeTextPaint, edgePaint, edgeTextPaint;
     private float height, width;
     private Graph graph;
-
     private Drawable mProxy;
 
+    /**
+     * Constructor 1
+     * @param graph with nodes/edges
+     */
+    public DrawableGraph(Graph graph) {
+        edgePaint = new Paint();
+        nodeTextPaint = new Paint();
+        edgeTextPaint = new Paint();
+
+        this.graph = graph;
+
+    }
+
+    /**
+     * Accessors and mutators
+     */
+
+    public Graph getGraph() {
+        return this.graph;
+    }
+
+    public void setGraph(Graph graph) {
+        this.graph = graph;
+    }
+
+    /**
+     * Methods from abstract class Drawable
+     */
 
     @Override
     public void setColorFilter(ColorFilter colorFilter) {
@@ -50,24 +68,26 @@ public class DrawableGraph extends Drawable {
         }
     }
 
-    public DrawableGraph(Graph graph) {
-        backgroundPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
-        backgroundPaint.setStrokeWidth(10);
-        edgePaint = new Paint();
-        edgePaint.setStyle(Paint.Style.STROKE);
-        edgePaint.setStrokeWidth(15);
-
-        textPaint = new Paint();
-        this.graph = graph;
-
-    }
-
-    public Graph getGraph() {
-        return this.graph;
-    }
-
     @Override
     public void draw(@NonNull Canvas canvas) {
+
+        backgroundPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
+        backgroundPaint.setStrokeWidth(10);
+
+        for(Edge edge : graph.getEdges()) {
+            edgePaint.setStyle(Paint.Style.STROKE);
+            edgePaint.setStrokeWidth(15);
+            edgePaint.setColor(edge.getColor());
+            canvas.drawPath(edge.getPath(), edgePaint);
+
+            edgeTextPaint.setStyle(Paint.Style.FILL);
+            edgeTextPaint.setColor(Color.BLACK);
+            edgeTextPaint.setTextAlign(Paint.Align.CENTER);
+
+            edgeTextPaint.setTextSize(50);
+            canvas.drawText(edge.getThumbnail(), edge.getMidPoint().x, edge.getMidPoint().y, edgeTextPaint);
+
+        }
 
         for (Node node : graph.getNodes()) {
             backgroundPaint.setStyle(Paint.Style.FILL);
@@ -75,18 +95,12 @@ public class DrawableGraph extends Drawable {
             canvas.drawRoundRect(node.getRect(), 200,200, backgroundPaint);
 
 
-            textPaint.setARGB(200, 255, 255, 255);
-            textPaint.setTextAlign(Paint.Align.CENTER);
-            textPaint.setTextSize(60);
-            canvas.drawText(node.getThumbnail(), node.getRect().centerX(), node.getRect().centerY(), textPaint);
+            nodeTextPaint.setARGB(200, 255, 255, 255);
+            nodeTextPaint.setTextAlign(Paint.Align.CENTER);
+            nodeTextPaint.setTextSize(60);
+            canvas.drawText(node.getThumbnail(), node.getRect().centerX(), node.getRect().centerY(), nodeTextPaint);
         }
 
-
-
-        for(Edge edge : graph.getEdges()) {
-            edgePaint.setColor(Color.BLACK);
-            canvas.drawPath(edge.getPath(), edgePaint);
-        }
     }
 
 

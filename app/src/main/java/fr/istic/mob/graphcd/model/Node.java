@@ -15,25 +15,16 @@ public class Node {
     private int color;
     private RectF rect;
     private int size;
-    private static int MIN_SIZE_NODE = 5;
+    private static int MIN_NODE_SIZE = 5;
 
-    public Node(float coordX, float coordY) {
-        this.coordX = coordX;
-        this.coordY = coordY;
-        this.thumbnail = "node";
-        this.rect = new RectF(coordX-50, coordY, coordX + 150, coordY + 150);
-        this.color = Color.RED;
-    }
-
-    public Node(float coordX, float coordY, String thumbnail, int color)
-    {
-        this.coordX = coordX;
-        this.coordY = coordY;
-        this.thumbnail = thumbnail;
-        this.rect = new RectF(coordX, coordY, coordX + 50, coordY + 50);
-        this.color = color;
-    }
-
+    /**
+     * Constructor 1
+     * @param coordX, float x coord
+     * @param coordY, float y coord
+     * @param thumbnail, name of the node
+     * @param color, int value of the node color
+     * @param size, int
+     */
     public Node(float coordX, float coordY, String thumbnail, int color, int size)
     {
         this.coordX = coordX;
@@ -43,12 +34,16 @@ public class Node {
         this.setSize(size);
     }
 
+    /**
+     * Accessors and mutators
+     */
+
     public void setSize(int size) {
         this.size = size;
         int thumbnailLength = this.getThumbnail().length();
         int coeffMult;
 
-        if(this.getThumbnail().length() <= MIN_SIZE_NODE) {
+        if(this.getThumbnail().length() <= MIN_NODE_SIZE) {
             coeffMult = 8;
         }else if(this.getThumbnail().length() <= 10){
             coeffMult = 12;
@@ -66,24 +61,18 @@ public class Node {
         return size;
     }
 
-    /**
-     * Accessors and mutators
-     */
-
     public float getCoordX() {
         return coordX;
-    }
-
-    public void setCoordX(float coordX) {
-        this.coordX = coordX;
     }
 
     public float getCoordY() {
         return coordY;
     }
 
-    public void setCoordY(float coordY) {
-        this.coordY = coordY;
+    public void setCoord(float x, float y) {
+        this.coordX = x;
+        this.coordY = y;
+        this.setSize(this.size);
     }
 
     public String getThumbnail() {

@@ -9,7 +9,12 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
+import android.graphics.LinearGradient;
 import android.graphics.RectF;
+import android.graphics.Shader;
+import android.graphics.drawable.Drawable;
+import android.graphics.drawable.ShapeDrawable;
+import android.graphics.drawable.shapes.RectShape;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.KeyEvent;
@@ -21,6 +26,7 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.NumberPicker;
+import android.widget.SeekBar;
 import android.widget.Toast;
 
 import java.util.ArrayList;
@@ -30,13 +36,12 @@ import fr.istic.mob.graphcd.model.Edge;
 import fr.istic.mob.graphcd.model.Graph;
 import fr.istic.mob.graphcd.model.Node;
 import fr.istic.mob.graphcd.view.DrawableGraph;
+import yuku.ambilwarna.AmbilWarnaDialog;
 
-public class MainActivity extends Activity implements View.OnTouchListener {
+public class MainActivity extends Activity implements View.OnTouchListener, View.OnLongClickListener {
     private DrawableGraph drawableGraph;
     private Graph graph;
     private Context context;
-    private List<Node> listNodes;
-    private List<Edge> listEdges;
     private Node node;
     private AlertDialog dialogNode, dialogEdge;
     private Dialog dialogNodeColor;
@@ -45,35 +50,18 @@ public class MainActivity extends Activity implements View.OnTouchListener {
     private Canvas canvas;
     private boolean blockMoves, blockEdges;
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         this.context = this;
 
-        listNodes = new ArrayList<>(); listEdges = new ArrayList<>();
-        /*
-        Node node1 = new Node(10,10);
-        Node node2 = new Node(442,1150);
-        listNodes.add(node1);
-        listNodes.add(node2);
-        listEdges.add(new Edge(node1, node2));
-         */
-        listNodes.add(new Node(550,550, "bluenode1", Color.BLUE, 50));
-        listNodes.add(new Node(400,400,"bluenode2", Color.BLUE, 50));
-        listNodes.add(new Node(490,1000,"blacknode1", Color.BLACK, 50));
-        listNodes.add(new Node(190,200,"blacknode2", Color.BLACK, 50));
-        listNodes.add(new Node(890,120, "n1", Color.BLACK, 50));
-        listNodes.add(new Node(50,350, "n2", Color.CYAN, 50));
-        listNodes.add(new Node(750,450, "nnnnnnnnnn3", Color.CYAN, 50));
-        listNodes.add(new Node(390,650, "graynode21", Color.GRAY, 50));
-        listNodes.add(new Node(320,900, "magentanode1", Color.MAGENTA, 50));
+        blockEdges = true; blockMoves = true;
 
         setContentView(R.layout.activity_main);
 
         imageView = findViewById(R.id.drawableG);
 
-        graph = new Graph("My graph", listNodes, listEdges);
+        graph = new Graph("My graph");
 
         bitmap = BitmapFactory.decodeResource(getResources(), R.id.drawableG);
         imageView.setImageBitmap(bitmap);
@@ -86,8 +74,9 @@ public class MainActivity extends Activity implements View.OnTouchListener {
         imageView.setImageDrawable(drawableGraph);
         imageView.setClickable(true);
         imageView.setLongClickable(true);
-
         imageView.setOnTouchListener(this);
+        imageView.setOnLongClickListener(this);
+
     }
 
     @Override
@@ -99,17 +88,31 @@ public class MainActivity extends Activity implements View.OnTouchListener {
         switch (motionEvent.getAction()) {
             case MotionEvent.ACTION_DOWN:
 
-                showNodeMenu(this);
+                if (blockMoves & node != null ) {
+                    // Click on a existing node
+                    showNodeMenu(this);
+                }
+                else if ((node == null)& blockMoves){
+                    // Add new node on touch location
+                    this.graph.getNodes().add(new Node(x,y, "new node", Color.BLACK, 50));
+                    drawableGraph.invalidateSelf();
+                } else {
 
+                }
                 break;
 
             case MotionEvent.ACTION_MOVE :
 
-                if (node != null & (blockMoves)) {
+                if (node != null & (!blockMoves))
+                {
+                    moveNodeTo(x, y, node);
+                    view.invalidate();
+                } else if (blockMoves & blockEdges & node != null)
+                {
+                    // add new edge
 
-                    //modeNodeTo(x, y, node);
-                    //view.invalidate();
                 }
+
 
                 break;
 
@@ -118,6 +121,10 @@ public class MainActivity extends Activity implements View.OnTouchListener {
         return true;
     }
 
+    @Override
+    public boolean onLongClick(View view) {
+        return false;
+    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -132,14 +139,14 @@ public class MainActivity extends Activity implements View.OnTouchListener {
                 this.setTitle(getResources().getString(R.string.app_name));
                 return true;
             case R.id.nodeModificationMode:
-                blockMoves = false;
+                blockMoves = true;
                 blockEdges = false;
                 item.setChecked(true);
                 this.setTitle(getResources().getString(R.string.app_name) + " - " + getResources().getString(R.string.node_modification_mode));
                 Toast.makeText(this, getResources().getString(R.string.node_edit_message), Toast.LENGTH_SHORT).show();
                 return true;
             case R.id.edgeModificationMode:
-                blockMoves = false;
+                blockMoves = true;
                 blockEdges = true;
                 item.setChecked(true);
                 this.setTitle(getResources().getString(R.string.app_name) + " - " + getResources().getString(R.string.edge_modification_mode));
@@ -179,12 +186,10 @@ public class MainActivity extends Activity implements View.OnTouchListener {
      * Move a node to a specified new location
      * @param newX, new X coord
      * @param newY, new Y coord
-     * @param node, the node to relocate
+     * @param nodeToMove, the node to relocate
      */
-    public void modeNodeTo(float newX, float newY, Node node) {
-        node.setRect(new RectF(newX-50, newY, newX+150, newY+150 ));
-
-        //this.invalidate();
+    private void moveNodeTo(float newX, float newY, Node nodeToMove) {
+        nodeToMove.setCoord(newX, newY);
     }
 
     /**
@@ -241,6 +246,10 @@ public class MainActivity extends Activity implements View.OnTouchListener {
         return false;
     }
 
+    /**
+     * Method called after a click on a "edit thumbnail" from the view
+     * @param view
+     */
     public void editThumbnail(View view)
     {
         showInputEditThumbnail();
@@ -264,6 +273,7 @@ public class MainActivity extends Activity implements View.OnTouchListener {
                     public void onClick(DialogInterface dialog, int whichButton) {
                         String nodeName = textInput.getText().toString();
                         node.setThumbnail(nodeName);
+                        node.setSize(node.getSize());
 
                     }
                 })
@@ -281,20 +291,20 @@ public class MainActivity extends Activity implements View.OnTouchListener {
      */
     public void showColorMenu(View view)
     {
-        dialogNode.dismiss();
-        dialogNodeColor = new Dialog(context);
-        dialogNodeColor.setTitle(getResources().getString(R.string.color));
-        dialogNodeColor.setContentView(R.layout.colors_options);
-        dialogNodeColor.show();
-    }
+        int initColor = 0xff000000;
+        AmbilWarnaDialog dialog = new AmbilWarnaDialog(this, initColor, new AmbilWarnaDialog.OnAmbilWarnaListener() {
+            @Override
+            public void onOk(AmbilWarnaDialog dialog, int color) {
+                node.setColor(color);
+                drawableGraph.invalidateSelf();
+            }
 
-    /**
-     * After a color has been selected from the view, a new color will be apply to the node
-     * @param view
-     */
-    public void colorClick(View view)
-    {
-
+            @Override
+            public void onCancel(AmbilWarnaDialog dialog) {
+                //
+            }
+        });
+        dialog.show();
     }
 
     /**
@@ -311,18 +321,19 @@ public class MainActivity extends Activity implements View.OnTouchListener {
         d.setView(dialogView);
         final NumberPicker numberPicker = (NumberPicker) dialogView.findViewById(R.id.dialog_number_picker);
         numberPicker.setMaxValue(50);
-        numberPicker.setMinValue(1);
+        numberPicker.setMinValue(5);
         numberPicker.setWrapSelectorWheel(false);
         numberPicker.setOnValueChangedListener(new NumberPicker.OnValueChangeListener() {
             @Override
             public void onValueChange(NumberPicker numberPicker, int i, int i1) {
-                Log.d("d", "onValueChange: ");
+                Log.d("EditNodeSize", "onValueChange: ");
             }
         });
         d.setPositiveButton(R.string.accept, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
-                Log.d("d", "onClick: " + numberPicker.getValue());
+                Log.d("EditNodeSize", "onClick: " + numberPicker.getValue());
+                node.setSize(numberPicker.getValue());
             }
         });
         d.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
