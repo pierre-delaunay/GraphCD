@@ -6,7 +6,11 @@ import android.graphics.RectF;
 import java.util.ArrayList;
 import java.util.List;
 
-
+/**
+ * Graph model
+ * @version 1.0.1
+ * @author Charly C, Pierre D
+ */
 public class Graph {
 
     private String description;

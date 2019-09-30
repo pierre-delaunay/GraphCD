@@ -8,31 +8,20 @@ import android.content.DialogInterface;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.RectF;
-import android.graphics.drawable.BitmapDrawable;
-import android.graphics.drawable.Drawable;
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.view.ContextThemeWrapper;
 import android.util.Log;
-import android.view.ContextMenu;
-import android.view.GestureDetector;
-import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
-import android.webkit.WebView;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.NumberPicker;
-import android.widget.PopupWindow;
 import android.widget.Toast;
-import android.widget.PopupMenu;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -42,11 +31,9 @@ import fr.istic.mob.graphcd.model.Graph;
 import fr.istic.mob.graphcd.model.Node;
 import fr.istic.mob.graphcd.view.DrawableGraph;
 
-import static java.security.AccessController.getContext;
-
 public class MainActivity extends Activity implements View.OnTouchListener {
-    DrawableGraph drawableGraph;
-    Graph graph;
+    private DrawableGraph drawableGraph;
+    private Graph graph;
     private Context context;
     private List<Node> listNodes;
     private List<Edge> listEdges;
@@ -56,7 +43,7 @@ public class MainActivity extends Activity implements View.OnTouchListener {
     private ImageView imageView;
     private Bitmap bitmap;
     private Canvas canvas;
-    private boolean editNode = true;
+    private boolean blockMoves, blockEdges;
 
 
     @Override
@@ -65,20 +52,22 @@ public class MainActivity extends Activity implements View.OnTouchListener {
         this.context = this;
 
         listNodes = new ArrayList<>(); listEdges = new ArrayList<>();
-
+        /*
         Node node1 = new Node(10,10);
         Node node2 = new Node(442,1150);
         listNodes.add(node1);
         listNodes.add(node2);
-        listNodes.add(new Node(550,550));
-        listNodes.add(new Node(400,400));
-        listNodes.add(new Node(490,750));
-        listNodes.add(new Node(190,200));
-        listNodes.add(new Node(890,20));
-        listNodes.add(new Node(50,350));
-        listNodes.add(new Node(1000,10));
-
         listEdges.add(new Edge(node1, node2));
+         */
+        listNodes.add(new Node(550,550, "bluenode1", Color.BLUE, 50));
+        listNodes.add(new Node(400,400,"bluenode2", Color.BLUE, 50));
+        listNodes.add(new Node(490,1000,"blacknode1", Color.BLACK, 50));
+        listNodes.add(new Node(190,200,"blacknode2", Color.BLACK, 50));
+        listNodes.add(new Node(890,120, "n1", Color.BLACK, 50));
+        listNodes.add(new Node(50,350, "n2", Color.CYAN, 50));
+        listNodes.add(new Node(750,450, "nnnnnnnnnn3", Color.CYAN, 50));
+        listNodes.add(new Node(390,650, "graynode21", Color.GRAY, 50));
+        listNodes.add(new Node(320,900, "magentanode1", Color.MAGENTA, 50));
 
         setContentView(R.layout.activity_main);
 
@@ -116,7 +105,7 @@ public class MainActivity extends Activity implements View.OnTouchListener {
 
             case MotionEvent.ACTION_MOVE :
 
-                if (node != null & (editNode)) {
+                if (node != null & (blockMoves)) {
 
                     //modeNodeTo(x, y, node);
                     //view.invalidate();
@@ -138,7 +127,36 @@ public class MainActivity extends Activity implements View.OnTouchListener {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        return super.onOptionsItemSelected(item);
+        switch (item.getItemId()) {
+            case R.id.graph_reinitialize:
+                this.setTitle(getResources().getString(R.string.app_name));
+                return true;
+            case R.id.nodeModificationMode:
+                blockMoves = false;
+                blockEdges = false;
+                item.setChecked(true);
+                this.setTitle(getResources().getString(R.string.app_name) + " - " + getResources().getString(R.string.node_modification_mode));
+                Toast.makeText(this, getResources().getString(R.string.node_edit_message), Toast.LENGTH_SHORT).show();
+                return true;
+            case R.id.edgeModificationMode:
+                blockMoves = false;
+                blockEdges = true;
+                item.setChecked(true);
+                this.setTitle(getResources().getString(R.string.app_name) + " - " + getResources().getString(R.string.edge_modification_mode));
+                Toast.makeText(this, getResources().getString(R.string.edge_edit_message), Toast.LENGTH_SHORT).show();
+                return true;
+            case R.id.moveMode:
+                blockMoves = false;
+                blockEdges = false;
+                this.setTitle(getResources().getString(R.string.app_name) + " - " + getResources().getString(R.string.move_mode));
+                Toast.makeText(this, getResources().getString(R.string.move_mode_message), Toast.LENGTH_SHORT).show();
+                item.setChecked(true);
+                return true;
+            default:
+                this.setTitle(getResources().getString(R.string.app_name));
+                return super.onOptionsItemSelected(item);
+        }
+
     }
 
     /**

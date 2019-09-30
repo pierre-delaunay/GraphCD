@@ -13,8 +13,6 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
-
-
         <ImageButton
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -65,7 +63,6 @@
         <ImageButton
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            app:srcCompat="@drawable/color_orange"
             android:id="@+id/orange"
             android:layout_weight="1"
             android:onClick="colorClick"
@@ -74,7 +71,6 @@
         <ImageButton
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            app:srcCompat="@drawable/color_magenta"
             android:id="@+id/magenta"
             android:layout_weight="1"
             android:onClick="colorClick"
@@ -89,7 +85,6 @@
         <ImageButton
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            app:srcCompat="@drawable/color_cyan"
             android:id="@+id/cyan"
             android:layout_weight="1"
             android:onClick="colorClick"
@@ -98,7 +93,6 @@
         <ImageButton
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            app:srcCompat="@drawable/color_black"
             android:id="@+id/white"
             android:layout_weight="1"
             android:onClick="colorClick"

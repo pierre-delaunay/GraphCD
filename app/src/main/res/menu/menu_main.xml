@@ -11,13 +11,14 @@
         android:id="@+id/groupModification"
         android:checkableBehavior="single">
 
-        <item android:id="@+id/node_addition_mode"
-            android:title="@string/node_modification_mode" />
+        <item android:id="@+id/nodeModificationMode"
+            android:title="@string/node_modification_mode"
+            android:checked="true"/>
 
-        <item android:id="@+id/node_modification_mode"
+        <item android:id="@+id/edgeModificationMode"
             android:title="@string/edge_modification_mode" />
 
-        <item android:id="@+id/edge_modification_mode"
+        <item android:id="@+id/moveMode"
             android:title="@string/move_mode" />
     </group>
 

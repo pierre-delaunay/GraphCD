@@ -3,14 +3,19 @@ package fr.istic.mob.graphcd.model;
 import android.graphics.Color;
 import android.graphics.RectF;
 
+/**
+ * Node model
+ * @version 1.0.1
+ * @author Charly C, Pierre D
+ */
 public class Node {
 
-    private int id, size;
     private float coordX, coordY;
     private String thumbnail;
     private int color;
-
     private RectF rect;
+    private int size;
+    private static int MIN_SIZE_NODE = 5;
 
     public Node(float coordX, float coordY) {
         this.coordX = coordX;
@@ -20,17 +25,50 @@ public class Node {
         this.color = Color.RED;
     }
 
-    public Node(float coordX, float coordY, String thumbnail)
+    public Node(float coordX, float coordY, String thumbnail, int color)
     {
         this.coordX = coordX;
         this.coordY = coordY;
         this.thumbnail = thumbnail;
         this.rect = new RectF(coordX, coordY, coordX + 50, coordY + 50);
+        this.color = color;
     }
 
-    private void resync() {
-        //this.rect = new RectF(coordX, coordY, coordX + 50, coordY + 50);
+    public Node(float coordX, float coordY, String thumbnail, int color, int size)
+    {
+        this.coordX = coordX;
+        this.coordY = coordY;
+        this.thumbnail = thumbnail;
+        this.color = color;
+        this.setSize(size);
     }
+
+    public void setSize(int size) {
+        this.size = size;
+        int thumbnailLength = this.getThumbnail().length();
+        int coeffMult;
+
+        if(this.getThumbnail().length() <= MIN_SIZE_NODE) {
+            coeffMult = 8;
+        }else if(this.getThumbnail().length() <= 10){
+            coeffMult = 12;
+        }else{
+            coeffMult = 15;
+        }
+
+        this.rect = new RectF(this.coordX - (size + (thumbnailLength*coeffMult) ),
+                this.coordY - size,
+                this.coordX + ( size + (thumbnailLength*coeffMult) ),
+                this.coordY + size);
+    }
+
+    public int getSize() {
+        return size;
+    }
+
+    /**
+     * Accessors and mutators
+     */
 
     public float getCoordX() {
         return coordX;
@@ -38,17 +76,14 @@ public class Node {
 
     public void setCoordX(float coordX) {
         this.coordX = coordX;
-        //this.resync();
     }
 
     public float getCoordY() {
         return coordY;
-
     }
 
     public void setCoordY(float coordY) {
         this.coordY = coordY;
-        //this.resync();
     }
 
     public String getThumbnail() {
@@ -65,5 +100,13 @@ public class Node {
 
     public void setRect(RectF rect) {
         this.rect = rect;
+    }
+
+    public int getColor() {
+        return color;
+    }
+
+    public void setColor(int color) {
+        this.color = color;
     }
 }

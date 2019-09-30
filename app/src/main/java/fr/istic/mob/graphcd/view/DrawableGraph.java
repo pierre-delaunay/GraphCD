@@ -71,13 +71,13 @@ public class DrawableGraph extends Drawable {
 
         for (Node node : graph.getNodes()) {
             backgroundPaint.setStyle(Paint.Style.FILL);
-            backgroundPaint.setColor(Color.RED);
+            backgroundPaint.setColor(node.getColor());
             canvas.drawRoundRect(node.getRect(), 200,200, backgroundPaint);
 
 
             textPaint.setARGB(200, 255, 255, 255);
             textPaint.setTextAlign(Paint.Align.CENTER);
-            textPaint.setTextSize(80);
+            textPaint.setTextSize(60);
             canvas.drawText(node.getThumbnail(), node.getRect().centerX(), node.getRect().centerY(), textPaint);
         }
 
