@@ -1,5 +1,6 @@
 <resources>
     <string name="app_name">GraphCD</string>
+
     <string name="graph_reinitialize">Reinitialize</string>
     <string name="edge_modification_mode">Add/edit edge</string>
     <string name="edge_edit_message">Edit/New edge mode activated</string>
@@ -22,4 +23,6 @@
 
     <string name="accept">OK</string>
     <string name="cancel">Cancel</string>
+    <string name="confirm">Are you sure ?</string>
+    <string name="reinitialize_title">Graph reinitialize</string>
 </resources>

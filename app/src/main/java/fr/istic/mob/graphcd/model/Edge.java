@@ -29,7 +29,6 @@ public class Edge {
         this.thumbnail = thumbnail;
         this.color = color;
         initPath();
-
     }
 
     /**
@@ -92,8 +91,7 @@ public class Edge {
         this.path = new Path();
         this.midPoint = new PointF();
 
-
-        path.moveTo(startingNode.getRect().centerX(), startingNode.getRect().centerY());
+        path.moveTo(startingNode.getCoordX(), startingNode.getCoordY());
         path.lineTo(endingNode.getCoordX(), endingNode.getCoordY());
 
         float[] middlePoint = {0f, 0f};
@@ -101,5 +99,7 @@ public class Edge {
         this.pathMeasure = new PathMeasure(path, false);
         pathMeasure.getPosTan(pathMeasure.getLength() * 0.50f, middlePoint, tangent);
         this.midPoint.set(middlePoint[0], middlePoint[1]);
+
+        path.quadTo(midPoint.x, midPoint.y, endingNode.getCoordX(), endingNode.getCoordY());
     }
 }

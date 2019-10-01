@@ -5,12 +5,14 @@ import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.GestureDetector;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -19,38 +21,42 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.NumberPicker;
 import android.widget.Toast;
 
+import fr.istic.mob.graphcd.model.Edge;
 import fr.istic.mob.graphcd.model.Graph;
 import fr.istic.mob.graphcd.model.Node;
 import fr.istic.mob.graphcd.view.DrawableGraph;
 import yuku.ambilwarna.AmbilWarnaDialog;
 
-public class MainActivity extends Activity implements View.OnTouchListener, View.OnLongClickListener {
+public class MainActivity extends Activity implements View.OnTouchListener {
     private DrawableGraph drawableGraph;
     private Graph graph;
     private Context context;
-    private Node node;
+    private Node node, startingNode, endingNode;
     private AlertDialog dialogNode, dialogEdge;
     private Dialog dialogNodeColor;
     private ImageView imageView;
     private Bitmap bitmap;
     private Canvas canvas;
     private boolean blockMoves, blockEdges;
+    private float[] startXY = new float[2];
+    private float[] stopXY = new float[2];
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         this.context = this;
 
-        blockEdges = true; blockMoves = true;
+        blockEdges = true; blockMoves = false;
 
         setContentView(R.layout.activity_main);
 
         imageView = findViewById(R.id.drawableG);
 
-        graph = new Graph("My graph");
+        this.graph = new Graph("My graph");
 
         bitmap = BitmapFactory.decodeResource(getResources(), R.id.drawableG);
         imageView.setImageBitmap(bitmap);
@@ -64,7 +70,6 @@ public class MainActivity extends Activity implements View.OnTouchListener, View
         imageView.setClickable(true);
         imageView.setLongClickable(true);
         imageView.setOnTouchListener(this);
-        imageView.setOnLongClickListener(this);
 
     }
 
@@ -75,7 +80,10 @@ public class MainActivity extends Activity implements View.OnTouchListener, View
         this.node = getNodeFromTouch(x, y);
 
         switch (motionEvent.getAction()) {
+            // L'utilisateur vient d'appuyer sur l'écran. C'est la première valeur récupérée suite à une action sur l'écran
             case MotionEvent.ACTION_DOWN:
+                startXY[0] = x;
+                startXY[1] = y;
 
                 if (blockMoves & node != null ) {
                     // Click on a existing node
@@ -85,34 +93,49 @@ public class MainActivity extends Activity implements View.OnTouchListener, View
                     // Add new node on touch location
                     this.graph.getNodes().add(new Node(x,y, "new node", Color.BLACK, 50));
                     drawableGraph.invalidateSelf();
-                } else {
-
                 }
+
+                // Add new edge
+                if (blockEdges && blockMoves) {
+
+                    try {
+                        startingNode = getNodeFromTouch(startXY[0], startXY[1]);
+                    } catch (Exception e) {
+                        Log.v("MainActivity", "Starting edge issue");
+                    }
+                }
+
                 break;
-
+            // Fait suite à l'événement précédent et indique que l'utilisateur n'a pas relaché la pression sur l'écran et est en train de bouger
             case MotionEvent.ACTION_MOVE :
-
                 if (node != null & (!blockMoves))
                 {
                     moveNodeTo(x, y, node);
+                    Log.v("Action_Move", "node x " +node.getCoordX() + "node y" +node.getCoordY()
+                            + "startingnode x " + graph.getEdges().get(0).getStartingNode().getCoordX());
+                    imageView.invalidate();
                     view.invalidate();
-                } else if (blockMoves & blockEdges & node != null)
-                {
-                    // add new edge
-
+                    drawableGraph.invalidateSelf();
                 }
 
-
                 break;
+             // Envoyé lorsque l'utilisateur cesse d'appuyer sur l'écran
+             case MotionEvent.ACTION_UP:
+                 stopXY[0] = x;
+                 stopXY[1] = y;
 
+                 if (blockEdges && blockMoves) {
+                    endingNode = getNodeFromTouch(stopXY[0], stopXY[1]);
+                    if (endingNode != null) {
+                        Edge newEdge = new Edge(startingNode, endingNode, "newEdge", Color.BLACK);
+                        this.graph.addEdge(newEdge);
+                        drawableGraph.invalidateSelf();
+                    }
+                 }
+                 break;
         }
 
         return true;
-    }
-
-    @Override
-    public boolean onLongClick(View view) {
-        return false;
     }
 
     @Override
@@ -126,6 +149,7 @@ public class MainActivity extends Activity implements View.OnTouchListener, View
         switch (item.getItemId()) {
             case R.id.graph_reinitialize:
                 this.setTitle(getResources().getString(R.string.app_name));
+                reinitialize();
                 return true;
             case R.id.nodeModificationMode:
                 blockMoves = true;
@@ -157,7 +181,7 @@ public class MainActivity extends Activity implements View.OnTouchListener, View
 
     /**
      * Method called by the view in order to delete the selected node
-     * @param view
+     * @param view View
      */
     public void deleteNode(View view) {
 
@@ -167,7 +191,7 @@ public class MainActivity extends Activity implements View.OnTouchListener, View
         }
 
         dialogNode.dismiss();
-        drawableGraph.invalidateSelf();
+        //drawableGraph.invalidateSelf();
 
     }
 
@@ -202,7 +226,7 @@ public class MainActivity extends Activity implements View.OnTouchListener, View
 
     /**
      * Display the node menu after a long click on a node
-     * @param context
+     * @param context Context
      * @return boolean
      */
     private boolean showNodeMenu(Context context) {
@@ -236,7 +260,7 @@ public class MainActivity extends Activity implements View.OnTouchListener, View
 
     /**
      * Method called after a click on a "edit thumbnail" from the view
-     * @param view
+     * @param view View
      */
     public void editThumbnail(View view)
     {
@@ -275,7 +299,7 @@ public class MainActivity extends Activity implements View.OnTouchListener, View
 
     /**
      * Display the color menu in order to edit the color of a node
-     * @param view
+     * @param view View
      */
     public void showColorMenu(View view)
     {
@@ -297,7 +321,7 @@ public class MainActivity extends Activity implements View.OnTouchListener, View
 
     /**
      * Display the node size menu
-     * @param v
+     * @param v View
      */
     public void showSizeMenu(View v)
     {
@@ -331,6 +355,37 @@ public class MainActivity extends Activity implements View.OnTouchListener, View
         });
         AlertDialog alertDialog = d.create();
         alertDialog.show();
+    }
+
+    /**
+     * Display a confirmation message box before the reinitialization
+     */
+    private void reinitialize() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+
+        builder.setTitle(R.string.reinitialize_title);
+        builder.setMessage(R.string.confirm);
+
+        builder.setPositiveButton(R.string.accept, new DialogInterface.OnClickListener() {
+
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
+                Intent intent = getIntent();
+                finish();
+                startActivity(intent);
+            }
+        });
+
+        builder.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
+
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
+            }
+        });
+
+        AlertDialog alert = builder.create();
+        alert.show();
     }
 
 }

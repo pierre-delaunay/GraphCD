@@ -23,4 +23,6 @@
 
     <string name="accept">OK</string>
     <string name="cancel">Annuler</string>
+    <string name="confirm">Êtes-vous sûr ?</string>
+    <string name="reinitialize_title">Réinitialiser le graph</string>
 </resources>

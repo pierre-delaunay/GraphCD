@@ -20,17 +20,8 @@ public class Graph {
 
     /**
      * Constructor 1
-     * @param description, misc infos
-     * @param nodes, List<Node>
-     * @param edges, List<Edge>
+     * @param description, String name/author
      */
-    public Graph (String description, List<Node> nodes, List<Edge> edges) {
-
-        this.description = description;
-        this.nodes = nodes;
-        this.edges = edges;
-    }
-
     public Graph(String description) {
 
         this.nodes = new ArrayList<>();
@@ -83,5 +74,9 @@ public class Graph {
 
     public void deleteNode(Node node) {
         this.nodes.remove(node);
+    }
+
+    public void addEdge(Edge edge) {
+        this.edges.add(edge);
     }
 }
