@@ -36,6 +36,7 @@ public class Edge {
      */
 
     public Path getPath() {
+        initPath();
         return this.path;
     }
 

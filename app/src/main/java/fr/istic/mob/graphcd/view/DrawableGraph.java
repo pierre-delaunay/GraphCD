@@ -4,6 +4,7 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.ColorFilter;
 import android.graphics.Paint;
+import android.graphics.Path;
 import android.graphics.PixelFormat;
 import android.graphics.drawable.Drawable;
 import android.support.annotation.NonNull;
@@ -12,12 +13,18 @@ import fr.istic.mob.graphcd.model.Edge;
 import fr.istic.mob.graphcd.model.Graph;
 import fr.istic.mob.graphcd.model.Node;
 
+/**
+ * DrawableGraph
+ * @version 1.0.1
+ * @author Charly C, Pierre D
+ */
 public class DrawableGraph extends Drawable {
 
     private Paint backgroundPaint, nodePaint, nodeTextPaint, edgePaint, edgeTextPaint;
     private float height, width;
     private Graph graph;
     private Drawable mProxy;
+    private Path pathToPaint;
 
     /**
      * Constructor 1
@@ -75,10 +82,13 @@ public class DrawableGraph extends Drawable {
         backgroundPaint.setStrokeWidth(10);
 
         for(Edge edge : graph.getEdges()) {
+            pathToPaint = new Path();
+            pathToPaint = edge.getPath();
+
             edgePaint.setStyle(Paint.Style.STROKE);
             edgePaint.setStrokeWidth(15);
             edgePaint.setColor(edge.getColor());
-            canvas.drawPath(edge.getPath(), edgePaint);
+            canvas.drawPath(pathToPaint, edgePaint);
 
             edgeTextPaint.setStyle(Paint.Style.FILL);
             edgeTextPaint.setColor(Color.BLACK);
@@ -102,11 +112,5 @@ public class DrawableGraph extends Drawable {
         }
 
     }
-
-
-
-
-
-
 
 }
