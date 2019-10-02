@@ -41,7 +41,9 @@ public class MainActivity extends Activity implements View.OnTouchListener {
     private ImageView imageView;
     private Bitmap bitmap;
     private Canvas canvas;
-    private boolean blockMoves, blockEdges;
+    private boolean blockMoves, blockEditEdge, blockEditNode, allowNewNode, allowNewEdge;
+    private enum EditMode {EDIT_NODE, EDIT_EDGE, NEW_NODE, NEW_EDGE, MOVE_ALL, INIT_MODE}
+    private EditMode currentMode;
     private float[] startXY = new float[2];
     private float[] stopXY = new float[2];
 
@@ -50,7 +52,8 @@ public class MainActivity extends Activity implements View.OnTouchListener {
         super.onCreate(savedInstanceState);
         this.context = this;
 
-        blockEdges = true; blockMoves = false;
+        setMode(EditMode.INIT_MODE);
+        currentMode = EditMode.INIT_MODE;
 
         setContentView(R.layout.activity_main);
 
@@ -85,18 +88,19 @@ public class MainActivity extends Activity implements View.OnTouchListener {
                 startXY[0] = x;
                 startXY[1] = y;
 
-                if (blockMoves & node != null ) {
+                if (currentMode == EditMode.EDIT_NODE ) {
                     // Click on a existing node
                     showNodeMenu(this);
                 }
-                else if ((node == null)& blockMoves){
+
+                if (currentMode == EditMode.NEW_NODE){
                     // Add new node on touch location
                     this.graph.getNodes().add(new Node(x,y, "new node", Color.BLACK, 50));
                     drawableGraph.invalidateSelf();
                 }
 
                 // Add new edge
-                if (blockEdges && blockMoves) {
+                if (currentMode == EditMode.NEW_EDGE) {
 
                     try {
                         startingNode = getNodeFromTouch(startXY[0], startXY[1]);
@@ -108,14 +112,12 @@ public class MainActivity extends Activity implements View.OnTouchListener {
                 break;
             // Fait suite à l'événement précédent et indique que l'utilisateur n'a pas relaché la pression sur l'écran et est en train de bouger
             case MotionEvent.ACTION_MOVE :
-                if (node != null & (!blockMoves))
+                if (currentMode == EditMode.MOVE_ALL)
                 {
                     moveNodeTo(x, y, node);
                     Log.v("Action_Move", "node x " +node.getCoordX() + "node y" +node.getCoordY()
                             + "startingnode x " + graph.getEdges().get(0).getStartingNode().getCoordX());
-                    imageView.invalidate();
-                    view.invalidate();
-                    drawableGraph.invalidateSelf();
+
                 }
 
                 break;
@@ -124,7 +126,7 @@ public class MainActivity extends Activity implements View.OnTouchListener {
                  stopXY[0] = x;
                  stopXY[1] = y;
 
-                 if (blockEdges && blockMoves) {
+                 if (currentMode == EditMode.NEW_EDGE) {
                     endingNode = getNodeFromTouch(stopXY[0], stopXY[1]);
                     if (endingNode != null) {
                         Edge newEdge = new Edge(startingNode, endingNode, "newEdge", Color.BLACK);
@@ -151,28 +153,36 @@ public class MainActivity extends Activity implements View.OnTouchListener {
                 this.setTitle(getResources().getString(R.string.app_name));
                 reinitialize();
                 return true;
+            case R.id.newNodeMode:
+                setMode(EditMode.NEW_NODE);
+                item.setChecked(true);
+                this.setTitle(getResources().getString(R.string.app_name) + " - " + getResources().getString(R.string.new_node_mode));
+                return true;
+            case R.id.newEdgeMode:
+                setMode(EditMode.NEW_EDGE);
+                item.setChecked(true);
+                this.setTitle(getResources().getString(R.string.app_name) + " - " + getResources().getString(R.string.new_edge_mode));
+                return true;
             case R.id.nodeModificationMode:
-                blockMoves = true;
-                blockEdges = false;
+                setMode(EditMode.EDIT_NODE);
                 item.setChecked(true);
                 this.setTitle(getResources().getString(R.string.app_name) + " - " + getResources().getString(R.string.node_modification_mode));
                 Toast.makeText(this, getResources().getString(R.string.node_edit_message), Toast.LENGTH_SHORT).show();
                 return true;
             case R.id.edgeModificationMode:
-                blockMoves = true;
-                blockEdges = true;
+                setMode(EditMode.EDIT_EDGE);
                 item.setChecked(true);
                 this.setTitle(getResources().getString(R.string.app_name) + " - " + getResources().getString(R.string.edge_modification_mode));
                 Toast.makeText(this, getResources().getString(R.string.edge_edit_message), Toast.LENGTH_SHORT).show();
                 return true;
             case R.id.moveMode:
-                blockMoves = false;
-                blockEdges = false;
+                setMode(EditMode.MOVE_ALL);
                 this.setTitle(getResources().getString(R.string.app_name) + " - " + getResources().getString(R.string.move_mode));
                 Toast.makeText(this, getResources().getString(R.string.move_mode_message), Toast.LENGTH_SHORT).show();
                 item.setChecked(true);
                 return true;
             default:
+                setMode(EditMode.INIT_MODE);
                 this.setTitle(getResources().getString(R.string.app_name));
                 return super.onOptionsItemSelected(item);
         }
@@ -191,7 +201,7 @@ public class MainActivity extends Activity implements View.OnTouchListener {
         }
 
         dialogNode.dismiss();
-        //drawableGraph.invalidateSelf();
+        drawableGraph.invalidateSelf();
 
     }
 
@@ -386,6 +396,42 @@ public class MainActivity extends Activity implements View.OnTouchListener {
 
         AlertDialog alert = builder.create();
         alert.show();
+    }
+
+    private void setMode(EditMode mode) {
+        switch (mode) {
+            case INIT_MODE:
+                blockMoves = true; blockEditEdge = true; blockEditNode = true;
+                allowNewNode = false; allowNewEdge = false;
+                currentMode = EditMode.INIT_MODE;
+                break;
+            case EDIT_NODE:
+                blockMoves = true; blockEditEdge = true; blockEditNode = false;
+                allowNewNode = false; allowNewEdge = false;
+                currentMode = EditMode.EDIT_NODE;
+                break;
+            case NEW_NODE:
+                blockMoves = true; blockEditEdge = true; blockEditNode = true;
+                allowNewNode = true; allowNewEdge = false;
+                currentMode = EditMode.NEW_NODE;
+                break;
+            case EDIT_EDGE:
+                blockMoves = false; blockEditEdge = false; blockEditNode = false;
+                allowNewNode = false; allowNewEdge = false;
+                currentMode = EditMode.EDIT_EDGE;
+                break;
+            case NEW_EDGE:
+                blockMoves = true; blockEditEdge = true; blockEditNode = true;
+                allowNewNode = false; allowNewEdge = true;
+                currentMode = EditMode.NEW_EDGE;
+                break;
+            case MOVE_ALL:
+                blockMoves = false; blockEditEdge = true; blockEditNode = true;
+                allowNewNode = false; allowNewEdge = false;
+                currentMode = EditMode.MOVE_ALL;
+                break;
+        }
+
     }
 
 }

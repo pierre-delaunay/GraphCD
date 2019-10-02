@@ -2,10 +2,12 @@
     <string name="app_name">GraphCD</string>
 
     <string name="graph_reinitialize">Réinitialiser le graph</string>
-    <string name="edge_modification_mode">Ajouter/modifier arc</string>
-    <string name="edge_edit_message">Mode ajout ou modification d\'arc activé</string>
-    <string name="node_modification_mode">Ajouter/modifier un noeud</string>
-    <string name="node_edit_message">Mode ajout ou modification de noeud activé</string>
+    <string name="edge_modification_mode">Modifier arc</string>
+    <string name="edge_edit_message">Mode modification d\'arc activé</string>
+    <string name="node_modification_mode">Modifier un noeud</string>
+    <string name="node_edit_message">Mode modification de noeud activé</string>
+    <string name="new_node_mode">Ajouter un noeud</string>
+    <string name="new_edge_mode">Ajouter un arc</string>
     <string name="move_mode">Déplacer un noeud/arc</string>
     <string name="move_mode_message">Mode déplacement de noeud ou d\'arc activé</string>
 

@@ -28,18 +28,16 @@ public class Graph {
         this.edges = new ArrayList<>();
 
         Node node1 = new Node(250,1150, "magentanode1", Color.MAGENTA, 50);
-        Node node2 = new Node(900,1150,"graynode21", Color.GRAY, 50);
+        Node node2 = new Node(900,1150,"graynode1", Color.GRAY, 50);
         nodes.add(node1);
         nodes.add(node2);
-        edges.add(new Edge(node1, node2, "myEdge", Color.RED));
-
         nodes.add(new Node(550,550, "bluenode1", Color.BLUE, 50));
         nodes.add(new Node(400,400,"bluenode2", Color.BLUE, 50));
         nodes.add(new Node(490,1000,"blacknode1", Color.BLACK, 50));
         nodes.add(new Node(190,200,"blacknode2", Color.BLACK, 50));
-        nodes.add(new Node(890,120, "n1", Color.BLACK, 50));
-        nodes.add(new Node(50,350, "n2", Color.CYAN, 50));
-        nodes.add(new Node(750,450, "голубой узел", Color.CYAN, 50));
+        nodes.add(new Node(890,120, "", Color.BLACK, 50));
+        nodes.add(new Node(500,800, "cyannode1", Color.CYAN, 50));
+        nodes.add(new Node(750,450, "c1", Color.CYAN, 50));
     }
 
     /**

@@ -2,10 +2,12 @@
     <string name="app_name">GraphCD</string>
 
     <string name="graph_reinitialize">Reinitialize</string>
-    <string name="edge_modification_mode">Add/edit edge</string>
-    <string name="edge_edit_message">Edit/New edge mode activated</string>
-    <string name="node_modification_mode">Add/edit node</string>
-    <string name="node_edit_message">Edit/New node mode activated</string>
+    <string name="edge_modification_mode">Edit edge</string>
+    <string name="edge_edit_message">Edit edge mode activated</string>
+    <string name="node_modification_mode">Edit node</string>
+    <string name="node_edit_message">Edit node mode activated</string>
+    <string name="new_node_mode">Add new node</string>
+    <string name="new_edge_mode">Add new edge</string>
     <string name="move_mode">Move node</string>
     <string name="move_mode_message">Move mode activated</string>
 
