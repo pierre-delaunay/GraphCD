@@ -201,7 +201,7 @@ public class MainActivity extends Activity implements View.OnTouchListener {
         }
 
         dialogNode.dismiss();
-        drawableGraph.invalidateSelf();
+        //drawableGraph.invalidateSelf();
 
     }
 

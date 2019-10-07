@@ -7,6 +7,15 @@
     <item android:id="@+id/graph_reinitialize"
         android:title="@string/graph_reinitialize" />
 
+    <item android:id="@+id/save_graph"
+        android:title="@string/save_graph" />
+
+    <item android:id="@+id/open_existing_graph"
+        android:title="@string/open_existing_graph" />
+
+    <item android:id="@+id/share_graph"
+        android:title="@string/share_graph" />
+
     <group
         android:id="@+id/groupModification"
         android:checkableBehavior="single">

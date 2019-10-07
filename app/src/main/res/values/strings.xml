@@ -10,6 +10,10 @@
     <string name="new_edge_mode">Ajouter un arc</string>
     <string name="move_mode">Déplacer un noeud/arc</string>
     <string name="move_mode_message">Mode déplacement de noeud ou d\'arc activé</string>
+    <string name="new_node_title">Nouveau noeud</string>
+    <string name="save_graph">Sauvegarder le graph</string>
+    <string name="open_existing_graph">Ouvrir graph</string>
+    <string name="share_graph">Envoyer par email</string>
 
     <string name="delete_node">Supprimer</string>
     <string name="edit_thumbnail">Modifier l\'étiquette</string>

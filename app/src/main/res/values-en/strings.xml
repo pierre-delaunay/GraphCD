@@ -10,6 +10,10 @@
     <string name="new_edge_mode">Add new edge</string>
     <string name="move_mode">Move node</string>
     <string name="move_mode_message">Move mode activated</string>
+    <string name="new_node_title">New node</string>
+    <string name="save_graph">Save graph</string>
+    <string name="open_existing_graph">Open existing graph</string>
+    <string name="share_graph">Share graph by email</string>
 
     <string name="delete_node">Delete</string>
     <string name="edit_thumbnail">Edit thumbnail</string>

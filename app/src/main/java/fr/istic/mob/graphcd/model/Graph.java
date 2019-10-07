@@ -77,4 +77,6 @@ public class Graph {
     public void addEdge(Edge edge) {
         this.edges.add(edge);
     }
+
+    public void addNode(Node node) { this.nodes.add(node); }
 }
