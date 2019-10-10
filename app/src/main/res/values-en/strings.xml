@@ -21,6 +21,7 @@
     <string name="edit_color_node">Edit color</string>
 
     <string name="title_node_menu">Edit a node</string>
+    <string name="new_node_thumbnail">Insert new node name</string>
     <string name="edit_thumbnail_hint">Insert new name</string>
     <string name="edit_thumbnail_message">New name</string>
     <string name="edit_color">Edit color</string>

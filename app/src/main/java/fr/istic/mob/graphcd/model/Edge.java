@@ -15,9 +15,10 @@ public class Edge {
     private Node startingNode, endingNode;
     private Path path;
     private String thumbnail;
-    private int color;
+    private int color, thickness;
     private PointF midPoint;
     private PathMeasure pathMeasure;
+
 
     /**
      * Constructors

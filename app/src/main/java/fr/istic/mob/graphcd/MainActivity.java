@@ -10,7 +10,9 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
+import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
 import android.util.Log;
 import android.view.GestureDetector;
 import android.view.KeyEvent;
@@ -25,6 +27,10 @@ import android.widget.LinearLayout;
 import android.widget.NumberPicker;
 import android.widget.Toast;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.util.Objects;
+
 import fr.istic.mob.graphcd.model.Edge;
 import fr.istic.mob.graphcd.model.Graph;
 import fr.istic.mob.graphcd.model.Node;
@@ -33,9 +39,9 @@ import yuku.ambilwarna.AmbilWarnaDialog;
 
 public class MainActivity extends Activity implements View.OnTouchListener {
     private DrawableGraph drawableGraph;
-    private Graph graph;
+    private static Graph graph;
     private Context context;
-    private Node node, startingNode, endingNode;
+    private Node node, startingNode, endingNode, newNode;
     private AlertDialog dialogNode, dialogEdge;
     private Dialog dialogNodeColor;
     private ImageView imageView;
@@ -95,7 +101,9 @@ public class MainActivity extends Activity implements View.OnTouchListener {
 
                 if (currentMode == EditMode.NEW_NODE){
                     // Add new node on touch location
-                    this.graph.getNodes().add(new Node(x,y, "new node", Color.BLACK, 50));
+                    this.newNode = new Node(x,y, "newNode", Color.BLACK, 50);
+
+                    showInputNewNode(x,y);
                     drawableGraph.invalidateSelf();
                 }
 
@@ -112,11 +120,10 @@ public class MainActivity extends Activity implements View.OnTouchListener {
                 break;
             // Fait suite à l'événement précédent et indique que l'utilisateur n'a pas relaché la pression sur l'écran et est en train de bouger
             case MotionEvent.ACTION_MOVE :
-                if (currentMode == EditMode.MOVE_ALL)
+                if (currentMode == EditMode.MOVE_ALL & node != null)
                 {
                     moveNodeTo(x, y, node);
-                    Log.v("Action_Move", "node x " +node.getCoordX() + "node y" +node.getCoordY()
-                            + "startingnode x " + graph.getEdges().get(0).getStartingNode().getCoordX());
+                    drawableGraph.invalidateSelf();
 
                 }
 
@@ -152,6 +159,9 @@ public class MainActivity extends Activity implements View.OnTouchListener {
             case R.id.graph_reinitialize:
                 this.setTitle(getResources().getString(R.string.app_name));
                 reinitialize();
+                return true;
+            case R.id.share_graph:
+                sendMail();
                 return true;
             case R.id.newNodeMode:
                 setMode(EditMode.NEW_NODE);
@@ -201,7 +211,7 @@ public class MainActivity extends Activity implements View.OnTouchListener {
         }
 
         dialogNode.dismiss();
-        //drawableGraph.invalidateSelf();
+        drawableGraph.invalidateSelf();
 
     }
 
@@ -212,6 +222,7 @@ public class MainActivity extends Activity implements View.OnTouchListener {
      * @param nodeToMove, the node to relocate
      */
     private void moveNodeTo(float newX, float newY, Node nodeToMove) {
+        Objects.requireNonNull(nodeToMove);
         nodeToMove.setCoord(newX, newY);
     }
 
@@ -223,9 +234,10 @@ public class MainActivity extends Activity implements View.OnTouchListener {
      */
     private Node getNodeFromTouch(float x, float y) {
         try {
-            for (Node node : this.graph.getNodes()) {
-                if (node.getRect().contains(x, y)) {
-                    return node;
+            for (Node n : this.graph.getNodes()) {
+                if (n.getRect().contains(x, y)) {
+                    Log.v("MainActivity", "gotya");
+                    return n;
                 }
             }
         } catch (Exception e) {
@@ -297,6 +309,34 @@ public class MainActivity extends Activity implements View.OnTouchListener {
                         node.setThumbnail(nodeName);
                         node.setSize(node.getSize());
 
+                    }
+                })
+                .setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int whichButton) {
+
+                    }
+                })
+                .show();
+    }
+
+    /**
+     * Display an input for the name of the new node
+     * @param x, x coord of new node
+     * @param y, y coord of new node
+     */
+    private void showInputNewNode(float x, float y)
+    {
+        final EditText textInput = new EditText(this);
+
+        new AlertDialog.Builder(this)
+                .setTitle(getResources().getString(R.string.new_node_title))
+                .setMessage(getResources().getString(R.string.new_node_thumbnail))
+                .setView(textInput)
+                .setPositiveButton(R.string.accept, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int whichButton) {
+                        String nodeName = textInput.getText().toString();
+                        newNode.setThumbnail(nodeName);
+                        graph.getNodes().add(newNode);
                     }
                 })
                 .setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
@@ -432,6 +472,39 @@ public class MainActivity extends Activity implements View.OnTouchListener {
                 break;
         }
 
+    }
+
+
+    private void sendMail() {
+        File file, f;
+        try {
+            //Enregistrement de l'image
+            imageView.setDrawingCacheEnabled(true);
+            Bitmap bitmap = imageView.getDrawingCache();
+
+            file = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM), "Graphs");
+            if (!file.exists()) {
+                file.mkdirs();
+            }
+            f = new File(file.getAbsolutePath() + File.separator + "graph" + ".png");
+
+            FileOutputStream fos = new FileOutputStream(f);
+            bitmap.compress(Bitmap.CompressFormat.PNG, 10, fos);
+            fos.close();
+            Uri path = Uri.fromFile(file);
+
+            Intent intent = new Intent(Intent.ACTION_SENDTO);
+            intent.setType("text/plain");
+            String message="File to be shared is blabla.";
+            intent.putExtra(Intent.EXTRA_SUBJECT, "Subject");
+            intent.putExtra(Intent.EXTRA_STREAM, Uri.fromFile(f));
+            intent.putExtra(Intent.EXTRA_TEXT, message);
+            intent.setData(Uri.parse("mailto:xyz@gmail.com"));
+            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
 }

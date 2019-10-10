@@ -21,6 +21,7 @@
     <string name="edit_color_node">Modifier la couleur</string>
 
     <string name="title_node_menu">Modifier un noeud</string>
+    <string name="new_node_thumbnail">Entrer le nom du nouveau noeud</string>
     <string name="edit_thumbnail_hint">Nom de l\'étiquette</string>
     <string name="edit_thumbnail_message">Entrer le nom de l\'étiquette</string>
     <string name="color">Couleur</string>
