@@ -31,5 +31,5 @@
         android:textColor="@color/colorBlack"
         android:typeface="sans"
         android:textSize="25sp"
-        android:onClick="editThumbnail" />
+        android:onClick="editNodeThumbnail" />
 </RelativeLayout>

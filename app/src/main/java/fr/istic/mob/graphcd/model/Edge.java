@@ -4,6 +4,8 @@ import android.graphics.Color;
 import android.graphics.Path;
 import android.graphics.PathMeasure;
 import android.graphics.PointF;
+import android.graphics.RectF;
+import android.graphics.Region;
 
 /**
  * Edge model
@@ -18,6 +20,8 @@ public class Edge {
     private int color, thickness;
     private PointF midPoint;
     private PathMeasure pathMeasure;
+    private Region region;
+    private RectF rectThumbnail;
 
 
     /**
@@ -85,6 +89,22 @@ public class Edge {
         this.midPoint = midPoint;
     }
 
+    public RectF getRectThumbnail() {
+        return rectThumbnail;
+    }
+
+    public void setRectThumbnail(RectF rectThumbnail) {
+        this.rectThumbnail = rectThumbnail;
+    }
+
+    public Region getRegion() {
+        return this.region;
+    }
+
+    public void setRegion(Region region) {
+        this.region = region;
+    }
+
     /**
      * Class methods
      */
@@ -92,7 +112,9 @@ public class Edge {
     private void initPath(){
         this.path = new Path();
         this.midPoint = new PointF();
-
+        this.region = new Region();
+        this.rectThumbnail = new RectF(getMidPoint().x, getMidPoint().y,
+                getMidPoint().x + 15, getMidPoint().y + 15);
         path.moveTo(startingNode.getCoordX(), startingNode.getCoordY());
         path.lineTo(endingNode.getCoordX(), endingNode.getCoordY());
 

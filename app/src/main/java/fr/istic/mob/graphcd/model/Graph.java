@@ -1,8 +1,5 @@
 package fr.istic.mob.graphcd.model;
 import android.graphics.Color;
-import android.graphics.Path;
-import android.graphics.Point;
-import android.graphics.RectF;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -20,24 +17,27 @@ public class Graph {
 
     /**
      * Constructor 1
-     * @param description, String name/author
+     * @param description, author
+     * @param width, width of the screen
+     * @param height, height of the screen
      */
-    public Graph(String description) {
-
+    public Graph(String description, float width, float height) {
         this.nodes = new ArrayList<>();
         this.edges = new ArrayList<>();
 
-        Node node1 = new Node(250,1150, "magentanode1", Color.MAGENTA, 50);
-        Node node2 = new Node(900,1150,"graynode1", Color.GRAY, 50);
-        nodes.add(node1);
-        nodes.add(node2);
-        nodes.add(new Node(550,550, "bluenode1", Color.BLUE, 50));
-        nodes.add(new Node(400,400,"bluenode2", Color.BLUE, 50));
-        nodes.add(new Node(490,1000,"blacknode1", Color.BLACK, 50));
-        nodes.add(new Node(190,200,"blacknode2", Color.BLACK, 50));
-        nodes.add(new Node(890,120, "", Color.BLACK, 50));
-        nodes.add(new Node(500,800, "cyannode1", Color.CYAN, 50));
-        nodes.add(new Node(750,450, "c1", Color.CYAN, 50));
+        float heightDiv, widthDiv;
+        heightDiv = (height / 3) / 2;
+
+        for (int i = 0; i < 3; i++) {
+            widthDiv = (width / 3) / 2;
+            for (int j = 0; j < 3; j++) {
+
+                Node newNode = new Node(widthDiv, heightDiv, "node", Color.RED, 50);
+                this.addNode(newNode);
+                widthDiv += width / 3;
+            }
+            heightDiv += height / 4;
+        }
     }
 
     /**
@@ -56,13 +56,11 @@ public class Graph {
         return edges;
     }
 
-    public void clearNodes()
-    {
+    public void clearNodes() {
         this.nodes.clear();
     }
 
-    public void clearEdges()
-    {
+    public void clearEdges() {
         this.edges.clear();
     }
 
@@ -74,9 +72,14 @@ public class Graph {
         this.nodes.remove(node);
     }
 
+    public void deleteEdge(Edge edge) {
+        this.edges.remove(edge);
+    }
     public void addEdge(Edge edge) {
         this.edges.add(edge);
     }
 
-    public void addNode(Node node) { this.nodes.add(node); }
+    public void addNode(Node node) {
+        this.nodes.add(node);
+    }
 }

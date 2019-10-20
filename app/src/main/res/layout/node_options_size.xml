@@ -31,5 +31,5 @@
         android:textColor="@color/colorBlack"
         android:typeface="sans"
         android:textSize="25sp"
-        android:onClick="showSizeMenu" />
+        android:onClick="showNodeSizeMenu" />
 </RelativeLayout>

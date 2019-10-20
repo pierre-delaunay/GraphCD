@@ -21,12 +21,14 @@
     <string name="edit_color_node">Modifier la couleur</string>
 
     <string name="title_node_menu">Modifier un noeud</string>
+    <string name="title_edge_menu">Modifier une arc</string>
     <string name="new_node_thumbnail">Entrer le nom du nouveau noeud</string>
     <string name="edit_thumbnail_hint">Nom de l\'étiquette</string>
     <string name="edit_thumbnail_message">Entrer le nom de l\'étiquette</string>
     <string name="color">Couleur</string>
     <string name="edit_color">Modifier la couleur</string>
     <string name="edit_size_message">Choisir une taille</string>
+    <string name="edit_thickness_edge">Modifier l\'épaisseur</string>
 
     <string name="accept">OK</string>
     <string name="cancel">Annuler</string>

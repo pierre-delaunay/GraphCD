@@ -21,13 +21,14 @@
     <string name="edit_color_node">Edit color</string>
 
     <string name="title_node_menu">Edit a node</string>
+    <string name="title_edge_menu">Edit an edge</string>
     <string name="new_node_thumbnail">Insert new node name</string>
     <string name="edit_thumbnail_hint">Insert new name</string>
     <string name="edit_thumbnail_message">New name</string>
     <string name="edit_color">Edit color</string>
     <string name="color">Color</string>
     <string name="edit_size_message">Pick new size</string>
-
+    <string name="edit_thickness_edge">Edit thickness</string>
     <string name="accept">OK</string>
     <string name="cancel">Cancel</string>
     <string name="confirm">Are you sure ?</string>

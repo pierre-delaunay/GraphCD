@@ -21,10 +21,10 @@ import fr.istic.mob.graphcd.model.Node;
 public class DrawableGraph extends Drawable {
 
     private Paint backgroundPaint, nodePaint, nodeTextPaint, edgePaint, edgeTextPaint;
-    private float height, width;
     private Graph graph;
     private Drawable mProxy;
     private Path pathToPaint;
+
 
     /**
      * Constructor 1
@@ -34,7 +34,6 @@ public class DrawableGraph extends Drawable {
         edgePaint = new Paint();
         nodeTextPaint = new Paint();
         edgeTextPaint = new Paint();
-
         this.graph = graph;
 
     }
@@ -81,6 +80,7 @@ public class DrawableGraph extends Drawable {
         backgroundPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
         backgroundPaint.setStrokeWidth(10);
 
+        // Draw edges
         for(Edge edge : graph.getEdges()) {
             pathToPaint = new Path();
             pathToPaint = edge.getPath();
@@ -99,6 +99,7 @@ public class DrawableGraph extends Drawable {
 
         }
 
+        // Draw nodes
         for (Node node : graph.getNodes()) {
             backgroundPaint.setStyle(Paint.Style.FILL);
             backgroundPaint.setColor(node.getColor());
@@ -110,7 +111,5 @@ public class DrawableGraph extends Drawable {
             nodeTextPaint.setTextSize(60);
             canvas.drawText(node.getThumbnail(), node.getRect().centerX(), node.getRect().centerY(), nodeTextPaint);
         }
-
     }
-
 }

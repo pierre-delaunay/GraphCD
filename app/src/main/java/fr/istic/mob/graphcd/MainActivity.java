@@ -1,11 +1,13 @@
 package fr.istic.mob.graphcd;
 
+import android.Manifest;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
@@ -13,8 +15,9 @@ import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.FileProvider;
 import android.util.Log;
-import android.view.GestureDetector;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -23,12 +26,12 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.NumberPicker;
 import android.widget.Toast;
 
 import java.io.File;
 import java.io.FileOutputStream;
+import java.util.Date;
 import java.util.Objects;
 
 import fr.istic.mob.graphcd.model.Edge;
@@ -41,7 +44,9 @@ public class MainActivity extends Activity implements View.OnTouchListener {
     private DrawableGraph drawableGraph;
     private static Graph graph;
     private Context context;
+    private float width, height;
     private Node node, startingNode, endingNode, newNode;
+    private Edge edge;
     private AlertDialog dialogNode, dialogEdge;
     private Dialog dialogNodeColor;
     private ImageView imageView;
@@ -52,11 +57,18 @@ public class MainActivity extends Activity implements View.OnTouchListener {
     private EditMode currentMode;
     private float[] startXY = new float[2];
     private float[] stopXY = new float[2];
+    private static final int REQUEST_EXTERNAL_STORAGE = 1;
+    private static String[] PERMISSIONS_STORAGE = {
+            Manifest.permission.READ_EXTERNAL_STORAGE,
+            Manifest.permission.WRITE_EXTERNAL_STORAGE
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         this.context = this;
+        this.height = context.getResources().getDisplayMetrics().heightPixels;
+        this.width = context.getResources().getDisplayMetrics().widthPixels;
 
         setMode(EditMode.INIT_MODE);
         currentMode = EditMode.INIT_MODE;
@@ -65,7 +77,7 @@ public class MainActivity extends Activity implements View.OnTouchListener {
 
         imageView = findViewById(R.id.drawableG);
 
-        this.graph = new Graph("My graph");
+        this.graph = new Graph("My graph", width, height);
 
         bitmap = BitmapFactory.decodeResource(getResources(), R.id.drawableG);
         imageView.setImageBitmap(bitmap);
@@ -117,6 +129,15 @@ public class MainActivity extends Activity implements View.OnTouchListener {
                     }
                 }
 
+                if (currentMode == EditMode.EDIT_EDGE) {
+                    try {
+
+                        edge = getEdgeFromTouch(startXY[0], startXY[1]);
+                    } catch (Exception e) {
+                        Log.v("MainActivity", "Edge detection issue");
+                    }
+                }
+
                 break;
             // Fait suite à l'événement précédent et indique que l'utilisateur n'a pas relaché la pression sur l'écran et est en train de bouger
             case MotionEvent.ACTION_MOVE :
@@ -153,6 +174,11 @@ public class MainActivity extends Activity implements View.OnTouchListener {
         return super.onCreateOptionsMenu(menu);
     }
 
+    /**
+     * Execute action after an item selection from the menu
+     * @param item, selected item
+     * @return boolean
+     */
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
@@ -161,7 +187,7 @@ public class MainActivity extends Activity implements View.OnTouchListener {
                 reinitialize();
                 return true;
             case R.id.share_graph:
-                sendMail();
+                sendEmail();
                 return true;
             case R.id.newNodeMode:
                 setMode(EditMode.NEW_NODE);
@@ -207,6 +233,7 @@ public class MainActivity extends Activity implements View.OnTouchListener {
 
         try { graph.deleteNode(node); }
         catch (Exception e) {
+            e.printStackTrace();
             Log.v("MainActivity","Cannot delete node");
         }
 
@@ -236,16 +263,34 @@ public class MainActivity extends Activity implements View.OnTouchListener {
         try {
             for (Node n : this.graph.getNodes()) {
                 if (n.getRect().contains(x, y)) {
-                    Log.v("MainActivity", "gotya");
                     return n;
                 }
             }
         } catch (Exception e) {
-            Log.v("DrawableGraph","Can't reach node");
+            e.printStackTrace();
         }
         return null;
     }
 
+    /**
+     * Retrieve a edge from a touch
+     * @param x, coord X of the touch
+     * @param y, coord Y of the touch
+     * @return concerned edge
+     */
+    private Edge getEdgeFromTouch(float x, float y) {
+        try {
+            for (Edge e : this.graph.getEdges()) {
+                if (e.getRectThumbnail().contains(x , y)) {
+                    Log.v("MainActivity", "gotya");
+                    return e;
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
     /**
      * Display the node menu after a long click on a node
      * @param context Context
@@ -281,20 +326,52 @@ public class MainActivity extends Activity implements View.OnTouchListener {
     }
 
     /**
+     * Display the edge menu after a long click on a edge
+     * @param context Context
+     * @return boolean
+     */
+    private boolean showEdgeMenu(Context context) {
+        LayoutInflater layoutInflaterAndroid = LayoutInflater.from(context);
+        View view = layoutInflaterAndroid.inflate(R.layout.edge_options, null);
+        AlertDialog.Builder dlgBuild = new AlertDialog.Builder(context)
+                .setCancelable(false)
+                .setOnKeyListener(new DialogInterface.OnKeyListener() {
+                    @Override
+                    public boolean onKey(DialogInterface dialog, int keyCode, KeyEvent event) {
+                        if (keyCode == KeyEvent.KEYCODE_BACK &&
+                                event.getAction() == KeyEvent.ACTION_UP &&
+                                !event.isCanceled()) {
+                            dialog.cancel();
+                        }
+                        return false;
+                    }
+                })
+                .setNegativeButton(getResources().getString(R.string.cancel),
+                        new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialogBox, int id) {
+                                dialogBox.cancel();
+                            }
+                        });
+        dlgBuild.setView(view);
+        dialogEdge = dlgBuild.create();
+        dialogEdge.setTitle(getResources().getString(R.string.title_edge_menu));
+        dialogEdge.show();
+        return false;
+    }
+
+    /**
      * Method called after a click on a "edit thumbnail" from the view
      * @param view View
      */
-    public void editThumbnail(View view)
-    {
-        showInputEditThumbnail();
+    public void editNodeThumbnail(View view) {
+        showInputEditNodeThumbnail();
         dialogNode.dismiss();
     }
 
     /**
      * Display a user input to edit the thumbnail of a node
      */
-    private void showInputEditThumbnail()
-    {
+    private void showInputEditNodeThumbnail() {
         final EditText textInput = new EditText(this);
         textInput.setText(node.getThumbnail());
         textInput.setHint(R.string.edit_thumbnail_hint);
@@ -324,8 +401,7 @@ public class MainActivity extends Activity implements View.OnTouchListener {
      * @param x, x coord of new node
      * @param y, y coord of new node
      */
-    private void showInputNewNode(float x, float y)
-    {
+    private void showInputNewNode(float x, float y) {
         final EditText textInput = new EditText(this);
 
         new AlertDialog.Builder(this)
@@ -351,8 +427,7 @@ public class MainActivity extends Activity implements View.OnTouchListener {
      * Display the color menu in order to edit the color of a node
      * @param view View
      */
-    public void showColorMenu(View view)
-    {
+    public void showNodeColorMenu(View view) {
         int initColor = 0xff000000;
         AmbilWarnaDialog dialog = new AmbilWarnaDialog(this, initColor, new AmbilWarnaDialog.OnAmbilWarnaListener() {
             @Override
@@ -373,8 +448,7 @@ public class MainActivity extends Activity implements View.OnTouchListener {
      * Display the node size menu
      * @param v View
      */
-    public void showSizeMenu(View v)
-    {
+    public void showNodeSizeMenu(View v) {
         final AlertDialog.Builder d = new AlertDialog.Builder(context);
         LayoutInflater inflater = this.getLayoutInflater();
         View dialogView = inflater.inflate(R.layout.node_size_numberpicker, null);
@@ -438,6 +512,10 @@ public class MainActivity extends Activity implements View.OnTouchListener {
         alert.show();
     }
 
+    /**
+     * Set new mode for editing or adding new node/edge
+     * @param mode, new mode
+     */
     private void setMode(EditMode mode) {
         switch (mode) {
             case INIT_MODE:
@@ -471,40 +549,127 @@ public class MainActivity extends Activity implements View.OnTouchListener {
                 currentMode = EditMode.MOVE_ALL;
                 break;
         }
-
     }
 
+    /**
+     * Checks if the app has permission to write to device storage
+     *
+     * If the app does not has permission then the user will be prompted to grant permissions
+     *
+     * @param activity, current activity
+     */
+    public static void verifyStoragePermissions(Activity activity) {
+        // Check if we have write permission
+        int permission = ActivityCompat.checkSelfPermission(activity, Manifest.permission.WRITE_EXTERNAL_STORAGE);
 
-    private void sendMail() {
-        File file, f;
+        if (permission != PackageManager.PERMISSION_GRANTED) {
+            // We don't have permission so prompt the user
+            ActivityCompat.requestPermissions(
+                    activity,
+                    PERMISSIONS_STORAGE,
+                    REQUEST_EXTERNAL_STORAGE
+            );
+        }
+    }
+
+    /**
+     * Save current graph in external storage before sending it by email
+     */
+    private void sendEmail() {
+        verifyStoragePermissions(this);
+        Date now = new Date();
+        android.text.format.DateFormat.format("yyyy-MM-dd_hh:mm:ss", now);
+
         try {
-            //Enregistrement de l'image
+            // Image naming and path to include sd card appending name you choose for file
+            String mPath = Environment.getExternalStorageDirectory().toString() + "/" + now + ".jpg";
+
+            // Create bitmap screen capture
             imageView.setDrawingCacheEnabled(true);
-            Bitmap bitmap = imageView.getDrawingCache();
+            Bitmap bitmap = Bitmap.createBitmap(imageView.getDrawingCache());
 
-            file = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM), "Graphs");
-            if (!file.exists()) {
-                file.mkdirs();
-            }
-            f = new File(file.getAbsolutePath() + File.separator + "graph" + ".png");
+            File imageFile = new File(mPath);
 
-            FileOutputStream fos = new FileOutputStream(f);
-            bitmap.compress(Bitmap.CompressFormat.PNG, 10, fos);
-            fos.close();
-            Uri path = Uri.fromFile(file);
+            FileOutputStream outputStream = new FileOutputStream(imageFile);
+            int quality = 100;
+            bitmap.compress(Bitmap.CompressFormat.JPEG, quality, outputStream);
+            outputStream.flush();
+            outputStream.close();
 
-            Intent intent = new Intent(Intent.ACTION_SENDTO);
-            intent.setType("text/plain");
-            String message="File to be shared is blabla.";
-            intent.putExtra(Intent.EXTRA_SUBJECT, "Subject");
-            intent.putExtra(Intent.EXTRA_STREAM, Uri.fromFile(f));
-            intent.putExtra(Intent.EXTRA_TEXT, message);
-            intent.setData(Uri.parse("mailto:xyz@gmail.com"));
-            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            // Email intent
+            Intent sharingIntent = new Intent(Intent.ACTION_SEND);
+            Uri uri = FileProvider.getUriForFile(context, context.getApplicationContext().getPackageName() + ".provider", imageFile);
 
-        } catch (Exception e) {
+            sharingIntent.setType("image/png");
+            sharingIntent.putExtra(Intent.EXTRA_STREAM, uri);
+            startActivity(Intent.createChooser(sharingIntent, getResources().getString(R.string.share_graph)));
+
+        } catch (Throwable e) {
             e.printStackTrace();
         }
     }
 
+    public void editEdgeThumbnail(View view) {
+        showInputEditEdgeThumbnail();
+        dialogEdge.dismiss();
+    }
+
+    public void showInputEditEdgeThumbnail() {
+        final EditText textInput = new EditText(this);
+        textInput.setText(edge.getThumbnail());
+        textInput.setHint(R.string.edit_thumbnail_hint);
+
+        new AlertDialog.Builder(this)
+                .setTitle(getResources().getString(R.string.edit_thumbnail))
+                .setMessage(getResources().getString(R.string.edit_thumbnail_message))
+                .setView(textInput)
+                .setPositiveButton(R.string.accept, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int whichButton) {
+                        String edgeName = textInput.getText().toString();
+                        edge.setThumbnail(edgeName);
+
+                    }
+                })
+                .setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int whichButton) {
+
+                    }
+                })
+                .show();
+    }
+
+    public void showEdgeColorMenu(View view) {
+        int initColor = 0xff000000;
+        AmbilWarnaDialog dialog = new AmbilWarnaDialog(this, initColor, new AmbilWarnaDialog.OnAmbilWarnaListener() {
+            @Override
+            public void onOk(AmbilWarnaDialog dialog, int color) {
+                edge.setColor(color);
+                drawableGraph.invalidateSelf();
+            }
+
+            @Override
+            public void onCancel(AmbilWarnaDialog dialog) {
+                //
+            }
+        });
+        dialog.show();
+    }
+
+    public void showEdgeThicknessMenu(View view) {
+
+    }
+
+    /**
+     * Method called by the view in order to delete the selected edge
+     * @param view View
+     */
+    public void deleteEdge(View view) {
+        try { graph.deleteEdge(edge); }
+        catch (Exception e) {
+            e.printStackTrace();
+            Log.v("MainActivity","Cannot delete edge");
+        }
+        dialogEdge.dismiss();
+        drawableGraph.invalidateSelf();
+    }
 }
