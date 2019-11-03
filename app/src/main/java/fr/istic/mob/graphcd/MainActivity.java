@@ -132,7 +132,7 @@ public class MainActivity extends Activity implements View.OnTouchListener {
                 if (currentMode == EditMode.EDIT_EDGE) {
                     try {
 
-                        edge = getEdgeFromTouch(startXY[0], startXY[1]);
+                        edge = getEdgeFromTouch(x, y);
                     } catch (Exception e) {
                         Log.v("MainActivity", "Edge detection issue");
                     }
@@ -273,7 +273,7 @@ public class MainActivity extends Activity implements View.OnTouchListener {
     }
 
     /**
-     * Retrieve a edge from a touch
+     * Retrieve a edge from screen interaction
      * @param x, coord X of the touch
      * @param y, coord Y of the touch
      * @return concerned edge
@@ -281,8 +281,8 @@ public class MainActivity extends Activity implements View.OnTouchListener {
     private Edge getEdgeFromTouch(float x, float y) {
         try {
             for (Edge e : this.graph.getEdges()) {
-                if (e.getRectThumbnail().contains(x , y)) {
-                    Log.v("MainActivity", "gotya");
+                if (e.getRectThumbnail().contains(x, y)) {
+                    Log.i("MainActivity","Edge found");
                     return e;
                 }
             }
@@ -291,6 +291,7 @@ public class MainActivity extends Activity implements View.OnTouchListener {
         }
         return null;
     }
+
     /**
      * Display the node menu after a long click on a node
      * @param context Context

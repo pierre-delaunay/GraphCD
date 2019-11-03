@@ -93,10 +93,8 @@ public class DrawableGraph extends Drawable {
             edgeTextPaint.setStyle(Paint.Style.FILL);
             edgeTextPaint.setColor(Color.BLACK);
             edgeTextPaint.setTextAlign(Paint.Align.CENTER);
-
             edgeTextPaint.setTextSize(50);
-            canvas.drawText(edge.getThumbnail(), edge.getMidPoint().x, edge.getMidPoint().y, edgeTextPaint);
-
+            canvas.drawText(edge.getThumbnail(), edge.getRectThumbnail().centerX(), edge.getRectThumbnail().centerY(), edgeTextPaint);
         }
 
         // Draw nodes
@@ -104,7 +102,6 @@ public class DrawableGraph extends Drawable {
             backgroundPaint.setStyle(Paint.Style.FILL);
             backgroundPaint.setColor(node.getColor());
             canvas.drawRoundRect(node.getRect(), 200,200, backgroundPaint);
-
 
             nodeTextPaint.setARGB(200, 255, 255, 255);
             nodeTextPaint.setTextAlign(Paint.Align.CENTER);
