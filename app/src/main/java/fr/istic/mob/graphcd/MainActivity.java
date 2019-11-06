@@ -121,7 +121,6 @@ public class MainActivity extends Activity implements View.OnTouchListener {
 
                 // Add new edge
                 if (currentMode == EditMode.NEW_EDGE) {
-
                     try {
                         startingNode = getNodeFromTouch(startXY[0], startXY[1]);
                     } catch (Exception e) {
@@ -131,8 +130,9 @@ public class MainActivity extends Activity implements View.OnTouchListener {
 
                 if (currentMode == EditMode.EDIT_EDGE) {
                     try {
-
                         edge = getEdgeFromTouch(x, y);
+                        Objects.requireNonNull(edge);
+                        showEdgeMenu(this);
                     } catch (Exception e) {
                         Log.v("MainActivity", "Edge detection issue");
                     }
@@ -141,11 +141,9 @@ public class MainActivity extends Activity implements View.OnTouchListener {
                 break;
             // Fait suite à l'événement précédent et indique que l'utilisateur n'a pas relaché la pression sur l'écran et est en train de bouger
             case MotionEvent.ACTION_MOVE :
-                if (currentMode == EditMode.MOVE_ALL & node != null)
-                {
+                if (currentMode == EditMode.MOVE_ALL & node != null) {
                     moveNodeTo(x, y, node);
                     drawableGraph.invalidateSelf();
-
                 }
 
                 break;
@@ -273,7 +271,7 @@ public class MainActivity extends Activity implements View.OnTouchListener {
     }
 
     /**
-     * Retrieve a edge from screen interaction
+     * Retrieve an edge from screen interaction
      * @param x, coord X of the touch
      * @param y, coord Y of the touch
      * @return concerned edge
@@ -327,7 +325,7 @@ public class MainActivity extends Activity implements View.OnTouchListener {
     }
 
     /**
-     * Display the edge menu after a long click on a edge
+     * Display the edge menu after a long click on existing edge
      * @param context Context
      * @return boolean
      */
@@ -610,11 +608,18 @@ public class MainActivity extends Activity implements View.OnTouchListener {
         }
     }
 
+    /**
+     * Method called by the view in order to show the edit input
+     * @param view View
+     */
     public void editEdgeThumbnail(View view) {
         showInputEditEdgeThumbnail();
         dialogEdge.dismiss();
     }
 
+    /**
+     * Display an text input to the user
+     */
     public void showInputEditEdgeThumbnail() {
         final EditText textInput = new EditText(this);
         textInput.setText(edge.getThumbnail());
@@ -628,17 +633,19 @@ public class MainActivity extends Activity implements View.OnTouchListener {
                     public void onClick(DialogInterface dialog, int whichButton) {
                         String edgeName = textInput.getText().toString();
                         edge.setThumbnail(edgeName);
-
                     }
                 })
                 .setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int whichButton) {
-
                     }
                 })
                 .show();
     }
 
+    /**
+     * Display the edge color selection menu
+     * @param view View
+     */
     public void showEdgeColorMenu(View view) {
         int initColor = 0xff000000;
         AmbilWarnaDialog dialog = new AmbilWarnaDialog(this, initColor, new AmbilWarnaDialog.OnAmbilWarnaListener() {
@@ -647,17 +654,44 @@ public class MainActivity extends Activity implements View.OnTouchListener {
                 edge.setColor(color);
                 drawableGraph.invalidateSelf();
             }
-
             @Override
             public void onCancel(AmbilWarnaDialog dialog) {
-                //
             }
         });
         dialog.show();
     }
 
+    /**
+     * Display the edit thickness menu
+     * The user can pick a new thickness through the numberpicker
+     * @param view View
+     */
     public void showEdgeThicknessMenu(View view) {
-
+        final AlertDialog.Builder d = new AlertDialog.Builder(context);
+        LayoutInflater inflater = this.getLayoutInflater();
+        View dialogView = inflater.inflate(R.layout.edge_thickness_numberpicker, null);
+        d.setTitle(R.string.edit_thickness_edge);
+        d.setMessage(R.string.edit_size_message);
+        d.setView(dialogView);
+        final NumberPicker numberPicker = (NumberPicker) dialogView.findViewById(R.id.dialog_number_picker);
+        numberPicker.setMaxValue(Edge.MAX_THICKNESS_VALUE);
+        numberPicker.setMinValue(Edge.MIN_THICKNESS_VALUE);
+        numberPicker.setWrapSelectorWheel(false);
+        d.setPositiveButton(R.string.accept, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                Log.d("EditEdgeThickness", "onClick: " + numberPicker.getValue());
+                edge.setThickness(numberPicker.getValue());
+                drawableGraph.invalidateSelf();
+            }
+        });
+        d.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+            }
+        });
+        AlertDialog alertDialog = d.create();
+        alertDialog.show();
     }
 
     /**

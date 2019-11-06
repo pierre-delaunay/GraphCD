@@ -86,7 +86,7 @@ public class DrawableGraph extends Drawable {
             pathToPaint = edge.getPath();
 
             edgePaint.setStyle(Paint.Style.STROKE);
-            edgePaint.setStrokeWidth(15);
+            edgePaint.setStrokeWidth(edge.getThickness());
             edgePaint.setColor(edge.getColor());
             canvas.drawPath(pathToPaint, edgePaint);
 

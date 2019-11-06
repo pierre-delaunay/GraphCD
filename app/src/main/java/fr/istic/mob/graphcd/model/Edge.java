@@ -22,19 +22,27 @@ public class Edge {
     private PathMeasure pathMeasure;
     private Region region;
     private RectF rectThumbnail;
-
+    private int thumbnailSize;
+    public static int MIN_THICKNESS_VALUE = 15;
+    public static int MAX_THICKNESS_VALUE = 40;
 
     /**
-     * Constructors
+     * Constructor 1
+     * @param startingNode
+     * @param endingNode
+     * @param thumbnail
+     * @param color
      */
-
     public Edge(Node startingNode, Node endingNode, String thumbnail, int color) {
         this.startingNode = startingNode;
         this.endingNode = endingNode;
         this.thumbnail = thumbnail;
+        this.thickness = MIN_THICKNESS_VALUE;
         this.color = color;
         initPath();
     }
+
+    public Edge () { }
 
     /**
      * Accessors and mutators
@@ -105,6 +113,14 @@ public class Edge {
         this.region = region;
     }
 
+    public int getThickness() {
+        return thickness;
+    }
+
+    public void setThickness(int thickness) {
+        this.thickness = thickness;
+    }
+
     /**
      * Class methods
      */
@@ -117,7 +133,6 @@ public class Edge {
                 getMidPoint().x + 15, getMidPoint().y + 15);
         path.moveTo(startingNode.getCoordX(), startingNode.getCoordY());
         path.lineTo(endingNode.getCoordX(), endingNode.getCoordY());
-
         float[] middlePoint = {0f, 0f};
         float[] tangent = {0f, 0f};
         this.pathMeasure = new PathMeasure(path, false);
@@ -126,7 +141,7 @@ public class Edge {
 
         this.rectThumbnail = new RectF(getMidPoint().x,
                 getMidPoint().y,
-                getMidPoint().x + 50, getMidPoint().y + 50);
+                getMidPoint().x + 75, getMidPoint().y + 75);
 
         //path.quadTo(midPoint.x, midPoint.y, endingNode.getCoordX(), endingNode.getCoordY());
     }

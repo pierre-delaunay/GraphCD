@@ -25,8 +25,7 @@ public class Node {
      * @param color, int value of the node color
      * @param size, int
      */
-    public Node(float coordX, float coordY, String thumbnail, int color, int size)
-    {
+    public Node(float coordX, float coordY, String thumbnail, int color, int size) {
         this.coordX = coordX;
         this.coordY = coordY;
         this.thumbnail = thumbnail;
