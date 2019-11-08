@@ -42,7 +42,7 @@ public class GsonManager {
         Gson gson = new Gson();
         String str = gson.toJson(graph);
         FileOutputStream fout;
-        Log.i("serialized", str);
+        Log.i("Serialized graph", str);
 
         try {
             fout = new FileOutputStream(f);
