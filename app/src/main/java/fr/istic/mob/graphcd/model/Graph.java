@@ -1,8 +1,13 @@
 package fr.istic.mob.graphcd.model;
+
 import android.graphics.Color;
+import android.os.Parcel;
+import android.os.Parcelable;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 /**
  * Graph model
@@ -54,6 +59,12 @@ public class Graph {
 
     public List<Edge> getEdges() {
         return edges;
+    }
+
+    public void removeEdge(Edge edge) {
+        if (this.edges.contains(edge)) {
+            this.edges.remove(edge);
+        }
     }
 
     public void clearNodes() {

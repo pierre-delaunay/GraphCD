@@ -15,6 +15,7 @@ import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
+import android.os.Parcel;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.FileProvider;
 import android.util.Log;
@@ -31,11 +32,14 @@ import android.widget.Toast;
 
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.ObjectOutputStream;
 import java.util.Date;
 import java.util.Objects;
 
 import fr.istic.mob.graphcd.model.Edge;
 import fr.istic.mob.graphcd.model.Graph;
+import fr.istic.mob.graphcd.model.Loop;
 import fr.istic.mob.graphcd.model.Node;
 import fr.istic.mob.graphcd.view.DrawableGraph;
 import yuku.ambilwarna.AmbilWarnaDialog;
@@ -99,6 +103,7 @@ public class MainActivity extends Activity implements View.OnTouchListener {
         float x = motionEvent.getX();
         float y = motionEvent.getY();
         this.node = getNodeFromTouch(x, y);
+        this.edge = getEdgeFromTouch(x, y);
 
         switch (motionEvent.getAction()) {
             // L'utilisateur vient d'appuyer sur l'écran. C'est la première valeur récupérée suite à une action sur l'écran
@@ -141,8 +146,13 @@ public class MainActivity extends Activity implements View.OnTouchListener {
                 break;
             // Fait suite à l'événement précédent et indique que l'utilisateur n'a pas relaché la pression sur l'écran et est en train de bouger
             case MotionEvent.ACTION_MOVE :
-                if (currentMode == EditMode.MOVE_ALL & node != null) {
+                if (currentMode == EditMode.MOVE_ALL && node != null) {
                     moveNodeTo(x, y, node);
+                    drawableGraph.invalidateSelf();
+                }
+
+                if (currentMode == EditMode.MOVE_ALL && edge != null) {
+                    moveEdgeTo(x, y, edge);
                     drawableGraph.invalidateSelf();
                 }
 
@@ -154,11 +164,19 @@ public class MainActivity extends Activity implements View.OnTouchListener {
 
                  if (currentMode == EditMode.NEW_EDGE) {
                     endingNode = getNodeFromTouch(stopXY[0], stopXY[1]);
-                    if (endingNode != null) {
-                        Edge newEdge = new Edge(startingNode, endingNode, "newEdge", Color.BLACK);
+
+                    // "Simple" edge, not a loop
+                    if (endingNode != null && !startingNode.equals(endingNode)) {
+                        Edge newEdge = new Edge(startingNode, endingNode, "newEdge", Edge.DEFAULT_EDGE_COLOR);
                         this.graph.addEdge(newEdge);
                         drawableGraph.invalidateSelf();
                     }
+                    // Loop
+                     if (startingNode.equals(endingNode)) {
+                         Loop newLoop = new Loop(startingNode, endingNode, "newLoop", Edge.DEFAULT_EDGE_COLOR);
+                         this.graph.addEdge(newLoop);
+                         drawableGraph.invalidateSelf();
+                     }
                  }
                  break;
         }
@@ -183,6 +201,9 @@ public class MainActivity extends Activity implements View.OnTouchListener {
             case R.id.graph_reinitialize:
                 this.setTitle(getResources().getString(R.string.app_name));
                 reinitialize();
+                return true;
+            case R.id.save_graph:
+                saveCurrentGraph();
                 return true;
             case R.id.share_graph:
                 sendEmail();
@@ -252,6 +273,17 @@ public class MainActivity extends Activity implements View.OnTouchListener {
     }
 
     /**
+     * Move an edge to a specified new location
+     * @param newX, new X coord
+     * @param newY, new Y coord
+     * @param edgeToMove, the edge to relocate
+     */
+    private void moveEdgeTo(float newX, float newY, Edge edgeToMove) {
+        Objects.requireNonNull(edgeToMove);
+        edgeToMove.setPath(newX, newY);
+    }
+
+    /**
      * Retrieve a node from a touch
      * @param x, coord X of the touch
      * @param y, coord Y of the touch
@@ -280,7 +312,7 @@ public class MainActivity extends Activity implements View.OnTouchListener {
         try {
             for (Edge e : this.graph.getEdges()) {
                 if (e.getRectThumbnail().contains(x, y)) {
-                    Log.i("MainActivity","Edge found");
+                    Log.i("getEdge","Edge found");
                     return e;
                 }
             }
@@ -706,5 +738,9 @@ public class MainActivity extends Activity implements View.OnTouchListener {
         }
         dialogEdge.dismiss();
         drawableGraph.invalidateSelf();
+    }
+
+    private void saveCurrentGraph() {
+
     }
 }

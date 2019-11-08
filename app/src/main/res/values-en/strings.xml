@@ -8,7 +8,7 @@
     <string name="node_edit_message">Edit node mode activated</string>
     <string name="new_node_mode">Add new node</string>
     <string name="new_edge_mode">Add new edge</string>
-    <string name="move_mode">Move node</string>
+    <string name="move_mode">Move node/edge</string>
     <string name="move_mode_message">Move mode activated</string>
     <string name="new_node_title">New node</string>
     <string name="save_graph">Save graph</string>

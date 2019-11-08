@@ -1,7 +1,9 @@
 package fr.istic.mob.graphcd.model;
 
-import android.graphics.Color;
+import android.graphics.PointF;
 import android.graphics.RectF;
+import android.os.Parcel;
+import android.os.Parcelable;
 
 /**
  * Node model
@@ -10,10 +12,12 @@ import android.graphics.RectF;
  */
 public class Node {
 
-    private float coordX, coordY;
+    private float coordX;
+    private float coordY;
     private String thumbnail;
     private int color;
     private RectF rect;
+    private PointF gravityCenter;
     private int size;
     private static int MIN_NODE_SIZE = 5;
 
@@ -30,6 +34,7 @@ public class Node {
         this.coordY = coordY;
         this.thumbnail = thumbnail;
         this.color = color;
+        this.gravityCenter = new PointF();
         this.setSize(size);
     }
 
@@ -44,9 +49,9 @@ public class Node {
 
         if(this.getThumbnail().length() <= MIN_NODE_SIZE) {
             coeffMult = 8;
-        }else if(this.getThumbnail().length() <= 10){
+        } else if(this.getThumbnail().length() <= 10) {
             coeffMult = 12;
-        }else{
+        } else {
             coeffMult = 15;
         }
 
@@ -54,6 +59,12 @@ public class Node {
                 this.coordY - size,
                 this.coordX + ( size + (thumbnailLength*coeffMult) ),
                 this.coordY + size);
+
+        this.gravityCenter.x = (this.coordX - (size + (thumbnailLength*coeffMult)) )
+                + ( ((this.coordX + (size + (thumbnailLength*coeffMult)) )
+                - (this.coordX - (size + (thumbnailLength*coeffMult))))/2 );
+        this.gravityCenter.y = (this.coordY - size) + (((this.coordY+size)
+                - (this.coordY-size))/2 );
     }
 
     public int getSize() {
@@ -97,4 +108,13 @@ public class Node {
     public void setColor(int color) {
         this.color = color;
     }
+
+    public PointF getGravityCenter() {
+        return gravityCenter;
+    }
+
+    public void setGravityCenter(PointF gravityCenter) {
+        this.gravityCenter = gravityCenter;
+    }
+
 }

@@ -6,6 +6,8 @@ import android.graphics.PathMeasure;
 import android.graphics.PointF;
 import android.graphics.RectF;
 import android.graphics.Region;
+import android.os.Parcel;
+import android.os.Parcelable;
 
 /**
  * Edge model
@@ -14,31 +16,38 @@ import android.graphics.Region;
  */
 public class Edge {
 
-    private Node startingNode, endingNode;
-    private Path path;
-    private String thumbnail;
-    private int color, thickness;
-    private PointF midPoint;
-    private PathMeasure pathMeasure;
-    private Region region;
-    private RectF rectThumbnail;
-    private int thumbnailSize;
+    protected Node startingNode, endingNode;
+    protected Path path;
+    protected String thumbnail;
+    protected int color, thickness;
+    protected PointF midPoint;
+    protected PathMeasure pathMeasure;
+    protected Region region;
+    protected RectF rectThumbnail;
+    protected int thumbnailSize, thumbnailLength;
+    protected float x, y;
     public static int MIN_THICKNESS_VALUE = 15;
     public static int MAX_THICKNESS_VALUE = 40;
+    public static int DEFAULT_THUMBNAIL_SIZE = 10;
+    public static int DEFAULT_EDGE_COLOR = Color.DKGRAY;
 
     /**
      * Constructor 1
-     * @param startingNode
-     * @param endingNode
-     * @param thumbnail
-     * @param color
+     * @param startingNode, Node
+     * @param endingNode, Node
+     * @param thumbnail, String name of the edge
+     * @param color, int color code
      */
     public Edge(Node startingNode, Node endingNode, String thumbnail, int color) {
         this.startingNode = startingNode;
         this.endingNode = endingNode;
         this.thumbnail = thumbnail;
         this.thickness = MIN_THICKNESS_VALUE;
+        this.thumbnailSize = DEFAULT_THUMBNAIL_SIZE;
+        this.thumbnailLength = thumbnail.length();
         this.color = color;
+        this.x = 0;
+        this.y = 0;
         initPath();
     }
 
@@ -53,8 +62,9 @@ public class Edge {
         return this.path;
     }
 
-    public void setPath(Path path) {
-        this.path = path;
+    public void setPath(float x, float y) {
+        this.x = x;
+        this.y = y;
     }
 
     public String getThumbnail() {
@@ -73,44 +83,12 @@ public class Edge {
         this.color = color;
     }
 
-    public Node getStartingNode() {
-        return startingNode;
-    }
-
-    public void setStartingNode(Node startingNode) {
-        this.startingNode = startingNode;
-    }
-
-    public Node getEndingNode() {
-        return endingNode;
-    }
-
-    public void setEndingNode(Node endingNode) {
-        this.endingNode = endingNode;
-    }
-
     public PointF getMidPoint() {
         return midPoint;
     }
 
-    public void setMidPoint(PointF midPoint) {
-        this.midPoint = midPoint;
-    }
-
     public RectF getRectThumbnail() {
         return rectThumbnail;
-    }
-
-    public void setRectThumbnail(RectF rectThumbnail) {
-        this.rectThumbnail = rectThumbnail;
-    }
-
-    public Region getRegion() {
-        return this.region;
-    }
-
-    public void setRegion(Region region) {
-        this.region = region;
     }
 
     public int getThickness() {
@@ -132,17 +110,25 @@ public class Edge {
         this.rectThumbnail = new RectF(getMidPoint().x, getMidPoint().y,
                 getMidPoint().x + 15, getMidPoint().y + 15);
         path.moveTo(startingNode.getCoordX(), startingNode.getCoordY());
+
+        if (x == 0 && y == 0) {
+            this.path.quadTo(startingNode.getGravityCenter().x, startingNode.getGravityCenter().y
+                    , endingNode.getGravityCenter().x, endingNode.getGravityCenter().y);
+        } else {
+            this.path.quadTo(x, y, endingNode.getGravityCenter().x, endingNode.getGravityCenter().y);
+        }
+
         path.lineTo(endingNode.getCoordX(), endingNode.getCoordY());
+
         float[] middlePoint = {0f, 0f};
         float[] tangent = {0f, 0f};
         this.pathMeasure = new PathMeasure(path, false);
         pathMeasure.getPosTan(pathMeasure.getLength() * 0.50f, middlePoint, tangent);
         this.midPoint.set(middlePoint[0], middlePoint[1]);
 
-        this.rectThumbnail = new RectF(getMidPoint().x,
-                getMidPoint().y,
-                getMidPoint().x + 75, getMidPoint().y + 75);
-
-        //path.quadTo(midPoint.x, midPoint.y, endingNode.getCoordX(), endingNode.getCoordY());
+        this.rectThumbnail = new RectF(getMidPoint().x - thumbnailSize * thumbnailLength,
+                getMidPoint().y -(3*(this.thumbnailSize)),
+                getMidPoint().x + thumbnailSize * thumbnailLength,
+                getMidPoint().y + thumbnailSize);
     }
 }
