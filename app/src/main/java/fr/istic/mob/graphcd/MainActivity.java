@@ -15,7 +15,6 @@ import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
-import android.os.Parcel;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.FileProvider;
 import android.util.Log;
@@ -32,8 +31,7 @@ import android.widget.Toast;
 
 import java.io.File;
 import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.ObjectOutputStream;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.Objects;
 
@@ -41,6 +39,8 @@ import fr.istic.mob.graphcd.model.Edge;
 import fr.istic.mob.graphcd.model.Graph;
 import fr.istic.mob.graphcd.model.Loop;
 import fr.istic.mob.graphcd.model.Node;
+import fr.istic.mob.graphcd.utils.FileAdapter;
+import fr.istic.mob.graphcd.utils.GsonManager;
 import fr.istic.mob.graphcd.view.DrawableGraph;
 import yuku.ambilwarna.AmbilWarnaDialog;
 
@@ -81,7 +81,13 @@ public class MainActivity extends Activity implements View.OnTouchListener {
 
         imageView = findViewById(R.id.drawableG);
 
-        this.graph = new Graph("My graph", width, height);
+        if (getIntent().getStringExtra("fileName") != null) {
+            String path = getIntent().getStringExtra("fileName");
+            this.graph = GsonManager.getExistingGraph(path);
+        } else {
+            this.graph = new Graph("myGraph", width, height);
+        }
+
 
         bitmap = BitmapFactory.decodeResource(getResources(), R.id.drawableG);
         imageView.setImageBitmap(bitmap);
@@ -203,7 +209,10 @@ public class MainActivity extends Activity implements View.OnTouchListener {
                 reinitialize();
                 return true;
             case R.id.save_graph:
-                saveCurrentGraph();
+                GsonManager.saveCurrentGraph(this, this.graph);
+                return true;
+            case R.id.open_existing_graph:
+                openExistingGraph();
                 return true;
             case R.id.share_graph:
                 sendEmail();
@@ -312,7 +321,6 @@ public class MainActivity extends Activity implements View.OnTouchListener {
         try {
             for (Edge e : this.graph.getEdges()) {
                 if (e.getRectThumbnail().contains(x, y)) {
-                    Log.i("getEdge","Edge found");
                     return e;
                 }
             }
@@ -740,7 +748,67 @@ public class MainActivity extends Activity implements View.OnTouchListener {
         drawableGraph.invalidateSelf();
     }
 
-    private void saveCurrentGraph() {
+    /**
+     * Handle click on selected file in order to open existing graph (from external storage)
+     */
+    private void openExistingGraph() {
+        ArrayList<String> filesList = new ArrayList<String>();
+        String path = Environment.getExternalStorageDirectory() + File.separator + "DCIM/Graphs";
+        File directory = new File(path);
+        File[] files = directory.listFiles();
 
+        for (File f : files) {
+            if (f.isFile() && f.getPath().endsWith(".graph")) {
+                filesList.add(path + File.separator + f.getName());
+            }
+        }
+
+        final FileAdapter adapter = new FileAdapter(context, filesList);
+        AlertDialog.Builder builder = new AlertDialog.Builder(context);
+        builder.setTitle(getResources().getString(R.string.title_file));
+
+        builder.setNegativeButton(getResources().getString(R.string.cancel), new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
+            }
+        });
+
+        builder.setAdapter(adapter, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                String nameFile = (String) adapter.getItem(which);
+                try {
+                    //Graph newGraph = GsonManager.getExistingGraph(nameFile);
+                    launchNewGraph(nameFile);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+        builder.show();
+    }
+
+    /**
+     * Launch new graph - bugged
+     * @param fileName, path of the graph located in external storage
+     */
+    private void launchNewGraph(String fileName) {
+        // Previous version
+        /*
+        if (newGraph != null) {
+            this.graph.clearNodes();
+            this.graph.clearEdges();
+            this.graph = newGraph;
+            this.drawableGraph.setGraph(newGraph);
+            this.drawableGraph.invalidateSelf();
+        }
+        */
+        // New version - debugging Android Fatal Signal SIGSEGV
+        Intent intent = getIntent();
+        //Intent intent = new Intent(new Intent(getBaseContext(), MainActivity.class));
+        finish();
+        intent.putExtra("fileName", fileName);
+        startActivity(intent);
     }
 }

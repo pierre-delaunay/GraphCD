@@ -14,12 +14,10 @@
     <string name="save_graph">Save graph</string>
     <string name="open_existing_graph">Open existing graph</string>
     <string name="share_graph">Share graph by email</string>
-
     <string name="delete_node">Delete</string>
     <string name="edit_thumbnail">Edit thumbnail</string>
     <string name="edit_size_node">Edit size</string>
     <string name="edit_color_node">Edit color</string>
-
     <string name="title_node_menu">Edit a node</string>
     <string name="title_edge_menu">Edit an edge</string>
     <string name="new_node_thumbnail">Insert new node name</string>
@@ -33,4 +31,5 @@
     <string name="cancel">Cancel</string>
     <string name="confirm">Are you sure ?</string>
     <string name="reinitialize_title">Graph reinitialize</string>
+    <string name="title_file">Select file</string>
 </resources>

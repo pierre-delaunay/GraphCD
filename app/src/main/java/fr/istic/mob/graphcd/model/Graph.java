@@ -4,9 +4,9 @@ import android.graphics.Color;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-import java.util.ArrayList;
+import com.google.gson.annotations.SerializedName;
+
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 /**
@@ -16,9 +16,12 @@ import java.util.Set;
  */
 public class Graph {
 
+    @SerializedName("description")
     private String description;
-    private List<Node> nodes;
-    private List<Edge> edges;
+    @SerializedName("nodes")
+    private Set<Node> nodes;
+    @SerializedName("edges")
+    private Set<Edge> edges;
 
     /**
      * Constructor 1
@@ -27,8 +30,9 @@ public class Graph {
      * @param height, height of the screen
      */
     public Graph(String description, float width, float height) {
-        this.nodes = new ArrayList<>();
-        this.edges = new ArrayList<>();
+        this.nodes = new HashSet<Node>();
+        this.edges = new HashSet<Edge>();
+        this.description = description;
 
         float heightDiv, widthDiv;
         heightDiv = (height / 3) / 2;
@@ -53,11 +57,11 @@ public class Graph {
         return description;
     }
 
-    public List<Node> getNodes() {
+    public Set<Node> getNodes() {
         return nodes;
     }
 
-    public List<Edge> getEdges() {
+    public Set<Edge> getEdges() {
         return edges;
     }
 
@@ -92,5 +96,10 @@ public class Graph {
 
     public void addNode(Node node) {
         this.nodes.add(node);
+    }
+
+    @Override
+    public String toString() {
+        return "Description : " + this.description + ", Nodes : " + this.nodes.size() + ", Edges : " + this.edges.size();
     }
 }

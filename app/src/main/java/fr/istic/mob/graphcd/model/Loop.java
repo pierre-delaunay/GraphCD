@@ -6,6 +6,8 @@ import android.graphics.RectF;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import com.google.gson.annotations.SerializedName;
+
 /**
  * Loop model
  * @version 1.0.1
@@ -13,6 +15,7 @@ import android.os.Parcelable;
  */
 public class Loop extends Edge {
 
+    @SerializedName("radius")
     private float radius;
 
     /**

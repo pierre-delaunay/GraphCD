@@ -14,12 +14,10 @@
     <string name="save_graph">Sauvegarder le graph</string>
     <string name="open_existing_graph">Ouvrir graph</string>
     <string name="share_graph">Envoyer par email</string>
-
     <string name="delete_node">Supprimer</string>
     <string name="edit_thumbnail">Modifier l\'étiquette</string>
     <string name="edit_size_node">Modifier la taille</string>
     <string name="edit_color_node">Modifier la couleur</string>
-
     <string name="title_node_menu">Modifier un noeud</string>
     <string name="title_edge_menu">Modifier une arc</string>
     <string name="new_node_thumbnail">Entrer le nom du nouveau noeud</string>
@@ -29,9 +27,9 @@
     <string name="edit_color">Modifier la couleur</string>
     <string name="edit_size_message">Choisir une taille</string>
     <string name="edit_thickness_edge">Modifier l\'épaisseur</string>
-
     <string name="accept">OK</string>
     <string name="cancel">Annuler</string>
     <string name="confirm">Êtes-vous sûr ?</string>
     <string name="reinitialize_title">Réinitialiser le graph</string>
+    <string name="title_file">Choisir le fichier</string>
 </resources>
