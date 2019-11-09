@@ -1,9 +1,6 @@
 package fr.istic.mob.graphcd.model;
 
 import android.graphics.Color;
-import android.os.Parcel;
-import android.os.Parcelable;
-
 import com.google.gson.annotations.SerializedName;
 
 import java.util.HashSet;
@@ -30,8 +27,8 @@ public class Graph {
      * @param height, height of the screen
      */
     public Graph(String description, float width, float height) {
-        this.nodes = new HashSet<Node>();
-        this.edges = new HashSet<Edge>();
+        this.nodes = new HashSet<>();
+        this.edges = new HashSet<>();
         this.description = description;
 
         float heightDiv, widthDiv;
@@ -66,9 +63,7 @@ public class Graph {
     }
 
     public void removeEdge(Edge edge) {
-        if (this.edges.contains(edge)) {
-            this.edges.remove(edge);
-        }
+        this.edges.remove(edge);
     }
 
     public void clearNodes() {
@@ -94,7 +89,7 @@ public class Graph {
         this.edges.add(edge);
     }
 
-    public void addNode(Node node) {
+    private void addNode(Node node) {
         this.nodes.add(node);
     }
 

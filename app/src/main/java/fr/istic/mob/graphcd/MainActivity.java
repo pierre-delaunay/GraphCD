@@ -3,7 +3,6 @@ package fr.istic.mob.graphcd;
 import android.Manifest;
 import android.app.Activity;
 import android.app.AlertDialog;
-import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -48,14 +47,11 @@ public class MainActivity extends Activity implements View.OnTouchListener {
     private DrawableGraph drawableGraph;
     private static Graph graph;
     private Context context;
-    private float width, height;
     private Node node, startingNode, endingNode, newNode;
     private Edge edge;
     private AlertDialog dialogNode, dialogEdge;
-    private Dialog dialogNodeColor;
     private ImageView imageView;
-    private Bitmap bitmap;
-    private Canvas canvas;
+    private float width, height;
     private boolean blockMoves, blockEditEdge, blockEditNode, allowNewNode, allowNewEdge;
     private enum EditMode {EDIT_NODE, EDIT_EDGE, NEW_NODE, NEW_EDGE, MOVE_ALL, INIT_MODE}
     private EditMode currentMode;
@@ -83,18 +79,18 @@ public class MainActivity extends Activity implements View.OnTouchListener {
 
         if (getIntent().getStringExtra("fileName") != null) {
             String path = getIntent().getStringExtra("fileName");
-            this.graph = GsonManager.getExistingGraph(path);
+            graph = GsonManager.getExistingGraph(path);
         } else {
-            this.graph = new Graph("myGraph", width, height);
+            graph = new Graph("myGraph", width, height);
         }
 
 
-        bitmap = BitmapFactory.decodeResource(getResources(), R.id.drawableG);
+        Bitmap bitmap = BitmapFactory.decodeResource(getResources(), R.id.drawableG);
         imageView.setImageBitmap(bitmap);
 
-        Bitmap.Config conf = Bitmap.Config.ARGB_8888; // see other conf types
-        Bitmap bmp = Bitmap.createBitmap(500, 500, conf); // this creates a MUTABLE bitmap
-        canvas = new Canvas(bmp);
+        Bitmap.Config conf = Bitmap.Config.ARGB_8888;
+        Bitmap bmp = Bitmap.createBitmap(500, 500, conf);
+        Canvas canvas = new Canvas(bmp);
 
         drawableGraph = new DrawableGraph(graph);
         imageView.setImageDrawable(drawableGraph);
@@ -174,13 +170,13 @@ public class MainActivity extends Activity implements View.OnTouchListener {
                     // "Simple" edge, not a loop
                     if (endingNode != null && !startingNode.equals(endingNode)) {
                         Edge newEdge = new Edge(startingNode, endingNode, "newEdge", Edge.DEFAULT_EDGE_COLOR);
-                        this.graph.addEdge(newEdge);
+                        graph.addEdge(newEdge);
                         drawableGraph.invalidateSelf();
                     }
                     // Loop
                      if (startingNode.equals(endingNode)) {
                          Loop newLoop = new Loop(startingNode, endingNode, "newLoop", Edge.DEFAULT_EDGE_COLOR);
-                         this.graph.addEdge(newLoop);
+                         graph.addEdge(newLoop);
                          drawableGraph.invalidateSelf();
                      }
                  }
@@ -206,10 +202,10 @@ public class MainActivity extends Activity implements View.OnTouchListener {
         switch (item.getItemId()) {
             case R.id.graph_reinitialize:
                 this.setTitle(getResources().getString(R.string.app_name));
-                reinitialize();
+                showReinitializeConfirmation();
                 return true;
             case R.id.save_graph:
-                GsonManager.saveCurrentGraph(this, this.graph);
+                GsonManager.saveCurrentGraph(graph);
                 return true;
             case R.id.open_existing_graph:
                 openExistingGraph();
@@ -300,7 +296,7 @@ public class MainActivity extends Activity implements View.OnTouchListener {
      */
     private Node getNodeFromTouch(float x, float y) {
         try {
-            for (Node n : this.graph.getNodes()) {
+            for (Node n : graph.getNodes()) {
                 if (n.getRect().contains(x, y)) {
                     return n;
                 }
@@ -319,7 +315,7 @@ public class MainActivity extends Activity implements View.OnTouchListener {
      */
     private Edge getEdgeFromTouch(float x, float y) {
         try {
-            for (Edge e : this.graph.getEdges()) {
+            for (Edge e : graph.getEdges()) {
                 if (e.getRectThumbnail().contains(x, y)) {
                     return e;
                 }
@@ -333,9 +329,8 @@ public class MainActivity extends Activity implements View.OnTouchListener {
     /**
      * Display the node menu after a long click on a node
      * @param context Context
-     * @return boolean
      */
-    private boolean showNodeMenu(Context context) {
+    private void showNodeMenu(Context context) {
         LayoutInflater layoutInflaterAndroid = LayoutInflater.from(context);
         View view = layoutInflaterAndroid.inflate(R.layout.node_options, null);
         AlertDialog.Builder dlgBuild = new AlertDialog.Builder(context)
@@ -361,15 +356,13 @@ public class MainActivity extends Activity implements View.OnTouchListener {
         dialogNode = dlgBuild.create();
         dialogNode.setTitle(getResources().getString(R.string.title_node_menu));
         dialogNode.show();
-        return false;
     }
 
     /**
      * Display the edge menu after a long click on existing edge
      * @param context Context
-     * @return boolean
      */
-    private boolean showEdgeMenu(Context context) {
+    private void showEdgeMenu(Context context) {
         LayoutInflater layoutInflaterAndroid = LayoutInflater.from(context);
         View view = layoutInflaterAndroid.inflate(R.layout.edge_options, null);
         AlertDialog.Builder dlgBuild = new AlertDialog.Builder(context)
@@ -395,7 +388,6 @@ public class MainActivity extends Activity implements View.OnTouchListener {
         dialogEdge = dlgBuild.create();
         dialogEdge.setTitle(getResources().getString(R.string.title_edge_menu));
         dialogEdge.show();
-        return false;
     }
 
     /**
@@ -471,8 +463,12 @@ public class MainActivity extends Activity implements View.OnTouchListener {
         AmbilWarnaDialog dialog = new AmbilWarnaDialog(this, initColor, new AmbilWarnaDialog.OnAmbilWarnaListener() {
             @Override
             public void onOk(AmbilWarnaDialog dialog, int color) {
-                node.setColor(color);
-                drawableGraph.invalidateSelf();
+                try {
+                    node.setColor(color);
+                    drawableGraph.invalidateSelf();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
             }
 
             @Override
@@ -494,7 +490,7 @@ public class MainActivity extends Activity implements View.OnTouchListener {
         d.setTitle(R.string.edit_size_node);
         d.setMessage(R.string.edit_size_message);
         d.setView(dialogView);
-        final NumberPicker numberPicker = (NumberPicker) dialogView.findViewById(R.id.dialog_number_picker);
+        final NumberPicker numberPicker = dialogView.findViewById(R.id.dialog_number_picker);
         numberPicker.setMaxValue(50);
         numberPicker.setMinValue(5);
         numberPicker.setWrapSelectorWheel(false);
@@ -523,7 +519,7 @@ public class MainActivity extends Activity implements View.OnTouchListener {
     /**
      * Display a confirmation message box before the reinitialization
      */
-    private void reinitialize() {
+    private void showReinitializeConfirmation() {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
 
         builder.setTitle(R.string.reinitialize_title);
@@ -532,10 +528,13 @@ public class MainActivity extends Activity implements View.OnTouchListener {
         builder.setPositiveButton(R.string.accept, new DialogInterface.OnClickListener() {
 
             public void onClick(DialogInterface dialog, int which) {
+                /*
                 dialog.dismiss();
                 Intent intent = getIntent();
                 finish();
                 startActivity(intent);
+                */
+                reinitialize();
             }
         });
 
@@ -549,6 +548,15 @@ public class MainActivity extends Activity implements View.OnTouchListener {
 
         AlertDialog alert = builder.create();
         alert.show();
+    }
+
+    /**
+     * Reinitiliaze current displayed graph
+     */
+    private void reinitialize() {
+        graph = new Graph("myGraph", width, height);
+        drawableGraph.setGraph(graph);
+        drawableGraph.invalidateSelf();
     }
 
     /**
@@ -713,7 +721,7 @@ public class MainActivity extends Activity implements View.OnTouchListener {
         d.setTitle(R.string.edit_thickness_edge);
         d.setMessage(R.string.edit_size_message);
         d.setView(dialogView);
-        final NumberPicker numberPicker = (NumberPicker) dialogView.findViewById(R.id.dialog_number_picker);
+        final NumberPicker numberPicker = dialogView.findViewById(R.id.dialog_number_picker);
         numberPicker.setMaxValue(Edge.MAX_THICKNESS_VALUE);
         numberPicker.setMinValue(Edge.MIN_THICKNESS_VALUE);
         numberPicker.setWrapSelectorWheel(false);
@@ -752,13 +760,13 @@ public class MainActivity extends Activity implements View.OnTouchListener {
      * Handle click on selected file in order to open existing graph (from external storage)
      */
     private void openExistingGraph() {
-        ArrayList<String> filesList = new ArrayList<String>();
+        ArrayList<String> filesList = new ArrayList<>();
         String path = Environment.getExternalStorageDirectory() + File.separator + "DCIM/Graphs";
         File directory = new File(path);
         File[] files = directory.listFiles();
 
         for (File f : files) {
-            if (f.isFile() && f.getPath().endsWith(".graph")) {
+            if (f.isFile() && f.getPath().endsWith(GsonManager.GRAPH_FILE_EXTENSION)) {
                 filesList.add(path + File.separator + f.getName());
             }
         }
@@ -779,7 +787,6 @@ public class MainActivity extends Activity implements View.OnTouchListener {
             public void onClick(DialogInterface dialog, int which) {
                 String nameFile = (String) adapter.getItem(which);
                 try {
-                    //Graph newGraph = GsonManager.getExistingGraph(nameFile);
                     launchNewGraph(nameFile);
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -790,7 +797,7 @@ public class MainActivity extends Activity implements View.OnTouchListener {
     }
 
     /**
-     * Launch new graph - bugged
+     * Launch new graph
      * @param fileName, path of the graph located in external storage
      */
     private void launchNewGraph(String fileName) {

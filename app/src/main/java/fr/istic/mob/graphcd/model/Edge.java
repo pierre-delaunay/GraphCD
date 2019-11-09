@@ -6,8 +6,6 @@ import android.graphics.PathMeasure;
 import android.graphics.PointF;
 import android.graphics.RectF;
 import android.graphics.Region;
-import android.os.Parcel;
-import android.os.Parcelable;
 
 /**
  * Edge model
@@ -17,7 +15,7 @@ import android.os.Parcelable;
 public class Edge {
 
     protected Node startingNode, endingNode;
-    protected Path path;
+    protected Path path, arrowPath;
     protected String thumbnail;
     protected int color, thickness;
     protected PointF midPoint;
@@ -99,12 +97,17 @@ public class Edge {
         this.thickness = thickness;
     }
 
+    public Path getArrowPath() {
+        return arrowPath;
+    }
+
     /**
      * Class methods
      */
 
     private void initPath(){
         this.path = new Path();
+        this.arrowPath = new Path();
         this.midPoint = new PointF();
         this.region = new Region();
         this.rectThumbnail = new RectF(getMidPoint().x, getMidPoint().y,
@@ -130,5 +133,28 @@ public class Edge {
                 getMidPoint().y -(3*(this.thumbnailSize)),
                 getMidPoint().x + thumbnailSize * thumbnailLength,
                 getMidPoint().y + thumbnailSize);
+
+        /* Arrows
+         * Source : https://stackoverflow.com/questions/6713757/how-do-i-draw-an-arrowhead-in-android
+         */
+        float deltaX = endingNode.getGravityCenter().x - startingNode.getGravityCenter().x;
+        float deltaY = endingNode.getGravityCenter().y - startingNode.getGravityCenter().y;
+
+        int ARROWHEAD_LENGTH = 60;
+        float sideZ = (float) Math.sqrt(deltaX * deltaX + deltaY * deltaY);
+        float frac = ARROWHEAD_LENGTH < sideZ ? ARROWHEAD_LENGTH / sideZ : 1.0f;
+
+        float point_x_1 = startingNode.getGravityCenter().x + ((1 - frac) * deltaX + frac * deltaY);
+        float point_y_1 = startingNode.getGravityCenter().y + ((1 - frac) * deltaY - frac * deltaX);
+        float point_x_2 = endingNode.getGravityCenter().x;
+        float point_y_2 = endingNode.getGravityCenter().y;
+        float point_x_3 = startingNode.getGravityCenter().x + ((1 - frac) * deltaX - frac * deltaY);
+        float point_y_3 = startingNode.getGravityCenter().y + ((1 - frac) * deltaY + frac * deltaX);
+
+        this.arrowPath.moveTo(point_x_1, point_y_1);
+        this.arrowPath.lineTo(point_x_2, point_y_2);
+        this.arrowPath.lineTo(point_x_3, point_y_3);
+        this.arrowPath.lineTo(point_x_1, point_y_1);
+
     }
 }

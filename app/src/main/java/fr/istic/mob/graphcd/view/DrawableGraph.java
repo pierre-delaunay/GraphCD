@@ -20,31 +20,41 @@ import fr.istic.mob.graphcd.model.Node;
  */
 public class DrawableGraph extends Drawable {
 
-    private Paint backgroundPaint, nodeTextPaint, edgePaint, edgeTextPaint, edgeRectPaint;
+    private Paint backgroundPaint, nodeTextPaint, edgePaint, edgeTextPaint, edgeRectPaint, edgeArrowPaint, tempEdgePaint;
     private Graph graph;
     private Drawable mProxy;
     private Path pathToPaint;
-
 
     /**
      * Constructor 1
      * @param graph with nodes/edges
      */
     public DrawableGraph(Graph graph) {
+        this.graph = graph;
         edgePaint = new Paint();
         nodeTextPaint = new Paint();
         edgeTextPaint = new Paint();
+        tempEdgePaint = new Paint();
         edgeRectPaint = new Paint();
-        this.graph = graph;
+        edgeArrowPaint = new Paint();
 
-    }
+        nodeTextPaint.setARGB(200, 255, 255, 255);
+        nodeTextPaint.setTextAlign(Paint.Align.CENTER);
+        nodeTextPaint.setTextSize(60);
 
-    /**
-     * Accessors and mutators
-     */
+        edgeTextPaint.setStyle(Paint.Style.FILL);
+        edgeTextPaint.setColor(Color.BLACK);
+        edgeTextPaint.setTextAlign(Paint.Align.CENTER);
+        edgeTextPaint.setTextSize(50);
 
-    public Graph getGraph() {
-        return this.graph;
+        edgeArrowPaint.setAntiAlias(true);
+        edgeArrowPaint.setStrokeJoin(Paint.Join.ROUND);
+        edgeArrowPaint.setStyle(Paint.Style.FILL);
+        edgeArrowPaint.setColor(Color.BLACK);
+
+        tempEdgePaint.setStyle(Paint.Style.STROKE);
+        tempEdgePaint.setColor(Color.RED);
+        tempEdgePaint.setStrokeWidth(5);
     }
 
     public void setGraph(Graph graph) {
@@ -89,28 +99,18 @@ public class DrawableGraph extends Drawable {
             edgePaint.setStyle(Paint.Style.STROKE);
             edgePaint.setStrokeWidth(edge.getThickness());
             edgePaint.setColor(edge.getColor());
+
             canvas.drawPath(pathToPaint, edgePaint);
-
-            edgeTextPaint.setStyle(Paint.Style.FILL);
-            edgeTextPaint.setColor(Color.BLACK);
-            edgeTextPaint.setTextAlign(Paint.Align.CENTER);
-            edgeTextPaint.setTextSize(50);
             canvas.drawText(edge.getThumbnail(), edge.getRectThumbnail().centerX(), edge.getRectThumbnail().centerY(), edgeTextPaint);
-
-            edgeRectPaint.setColor(Color.RED);
-            // debug loop
-            //canvas.drawRoundRect(edge.getRectThumbnail(),50,60, edgeRectPaint);
+            canvas.drawPath(edge.getArrowPath(), edgeArrowPaint);
         }
 
         // Draw nodes
         for (Node node : graph.getNodes()) {
             backgroundPaint.setStyle(Paint.Style.FILL);
             backgroundPaint.setColor(node.getColor());
-            canvas.drawRoundRect(node.getRect(), 200,200, backgroundPaint);
 
-            nodeTextPaint.setARGB(200, 255, 255, 255);
-            nodeTextPaint.setTextAlign(Paint.Align.CENTER);
-            nodeTextPaint.setTextSize(60);
+            canvas.drawRoundRect(node.getRect(), 200,200, backgroundPaint);
             canvas.drawText(node.getThumbnail(), node.getRect().centerX(), node.getRect().centerY(), nodeTextPaint);
         }
     }

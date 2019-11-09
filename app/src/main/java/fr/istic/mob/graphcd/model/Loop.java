@@ -3,9 +3,6 @@ package fr.istic.mob.graphcd.model;
 import android.graphics.Path;
 import android.graphics.PointF;
 import android.graphics.RectF;
-import android.os.Parcel;
-import android.os.Parcelable;
-
 import com.google.gson.annotations.SerializedName;
 
 /**
@@ -55,6 +52,7 @@ public class Loop extends Edge {
 
     private void initLoop() {
         super.path = new Path();
+        super.arrowPath = new Path();
         super.midPoint = new PointF();
 
         this.radius = startingNode.getRect().width() / 2;

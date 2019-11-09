@@ -43,14 +43,6 @@ public class FileAdapter extends BaseAdapter {
     }
 
     /**
-     * Get context
-     * @return Context context
-     */
-    public Context getContext() {
-        return this.context;
-    }
-
-    /**
      * Get item by index
      * @param index int
      * @return Object o
@@ -80,9 +72,9 @@ public class FileAdapter extends BaseAdapter {
 
         if (convertView == null) {
             holder = new ViewHolder() ;
-            convertView = inflater.inflate(R.layout.file_list, null);
-            holder.textFile = (TextView) convertView.findViewById(R.id.textFile);
-            holder.imageFile = (ImageView) convertView.findViewById(R.id.imageFile);
+            convertView = inflater.inflate(R.layout.file_list, parent, false);
+            holder.textFile = convertView.findViewById(R.id.textFile);
+            holder.imageFile = convertView.findViewById(R.id.imageFile);
             convertView.setTag(holder);
         } else {
             holder = (ViewHolder)convertView.getTag();
