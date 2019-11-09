@@ -528,12 +528,6 @@ public class MainActivity extends Activity implements View.OnTouchListener {
         builder.setPositiveButton(R.string.accept, new DialogInterface.OnClickListener() {
 
             public void onClick(DialogInterface dialog, int which) {
-                /*
-                dialog.dismiss();
-                Intent intent = getIntent();
-                finish();
-                startActivity(intent);
-                */
                 reinitialize();
             }
         });
@@ -804,11 +798,11 @@ public class MainActivity extends Activity implements View.OnTouchListener {
         // Previous version
         /*
         if (newGraph != null) {
-            this.graph.clearNodes();
-            this.graph.clearEdges();
-            this.graph = newGraph;
-            this.drawableGraph.setGraph(newGraph);
-            this.drawableGraph.invalidateSelf();
+            graph.clearNodes();
+            graph.clearEdges();
+            graph = newGraph;
+            drawableGraph.setGraph(newGraph);
+            drawableGraph.invalidateSelf();
         }
         */
         // New version - debugging Android Fatal Signal SIGSEGV

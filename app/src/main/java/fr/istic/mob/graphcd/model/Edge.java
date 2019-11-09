@@ -155,6 +155,5 @@ public class Edge {
         this.arrowPath.lineTo(point_x_2, point_y_2);
         this.arrowPath.lineTo(point_x_3, point_y_3);
         this.arrowPath.lineTo(point_x_1, point_y_1);
-
     }
 }
