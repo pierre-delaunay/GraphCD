@@ -72,7 +72,6 @@ public class MainActivity extends Activity implements View.OnTouchListener {
 
         setMode(EditMode.INIT_MODE);
         currentMode = EditMode.INIT_MODE;
-
         setContentView(R.layout.activity_main);
 
         imageView = findViewById(R.id.drawableG);
@@ -83,7 +82,6 @@ public class MainActivity extends Activity implements View.OnTouchListener {
         } else {
             graph = new Graph("myGraph", width, height);
         }
-
 
         Bitmap bitmap = BitmapFactory.decodeResource(getResources(), R.id.drawableG);
         imageView.setImageBitmap(bitmap);
@@ -174,10 +172,14 @@ public class MainActivity extends Activity implements View.OnTouchListener {
                         drawableGraph.invalidateSelf();
                     }
                     // Loop
-                     if (startingNode.equals(endingNode)) {
-                         Loop newLoop = new Loop(startingNode, endingNode, "newLoop", Edge.DEFAULT_EDGE_COLOR);
-                         graph.addEdge(newLoop);
-                         drawableGraph.invalidateSelf();
+                     try {
+                         if (startingNode.equals(endingNode)) {
+                             Loop newLoop = new Loop(startingNode, endingNode, "newLoop", Edge.DEFAULT_EDGE_COLOR);
+                             graph.addEdge(newLoop);
+                             drawableGraph.invalidateSelf();
+                         }
+                     } catch (Exception e) {
+                         Log.i("MainActivity", "Loop problem");
                      }
                  }
                  break;
@@ -205,6 +207,7 @@ public class MainActivity extends Activity implements View.OnTouchListener {
                 showReinitializeConfirmation();
                 return true;
             case R.id.save_graph:
+                verifyStoragePermissions(this);
                 GsonManager.saveCurrentGraph(graph);
                 return true;
             case R.id.open_existing_graph:
@@ -754,15 +757,20 @@ public class MainActivity extends Activity implements View.OnTouchListener {
      * Handle click on selected file in order to open existing graph (from external storage)
      */
     private void openExistingGraph() {
+        verifyStoragePermissions(this);
         ArrayList<String> filesList = new ArrayList<>();
         String path = Environment.getExternalStorageDirectory() + File.separator + "DCIM/Graphs";
         File directory = new File(path);
         File[] files = directory.listFiles();
 
-        for (File f : files) {
-            if (f.isFile() && f.getPath().endsWith(GsonManager.GRAPH_FILE_EXTENSION)) {
-                filesList.add(path + File.separator + f.getName());
+        try {
+            for (File f : files) {
+                if (f.isFile() && f.getPath().endsWith(GsonManager.GRAPH_FILE_EXTENSION)) {
+                    filesList.add(path + File.separator + f.getName());
+                }
             }
+        } catch (Exception e) {
+            e.printStackTrace();
         }
 
         final FileAdapter adapter = new FileAdapter(context, filesList);

@@ -21,7 +21,7 @@ import fr.istic.mob.graphcd.model.Graph;
 public class GsonManager {
 
     public static final String GRAPH_FILE_EXTENSION = ".gra";
-    private static final String GRAPH_DIRECTORY_NAME = "Graphs";
+    public static final String GRAPH_DIRECTORY_NAME = "Graphs";
 
     /**
      * Save current graph as JSON in external storage
