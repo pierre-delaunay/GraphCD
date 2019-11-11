@@ -95,7 +95,6 @@ public class MainActivity extends Activity implements View.OnTouchListener {
         imageView.setClickable(true);
         imageView.setLongClickable(true);
         imageView.setOnTouchListener(this);
-
     }
 
     @Override
@@ -142,7 +141,6 @@ public class MainActivity extends Activity implements View.OnTouchListener {
                         Log.v("MainActivity", "Edge detection issue");
                     }
                 }
-
                 break;
             // Fait suite à l'événement précédent et indique que l'utilisateur n'a pas relaché la pression sur l'écran et est en train de bouger
             case MotionEvent.ACTION_MOVE :
@@ -155,7 +153,6 @@ public class MainActivity extends Activity implements View.OnTouchListener {
                     moveEdgeTo(x, y, edge);
                     drawableGraph.invalidateSelf();
                 }
-
                 break;
              // Envoyé lorsque l'utilisateur cesse d'appuyer sur l'écran
              case MotionEvent.ACTION_UP:
@@ -249,7 +246,6 @@ public class MainActivity extends Activity implements View.OnTouchListener {
                 this.setTitle(getResources().getString(R.string.app_name));
                 return super.onOptionsItemSelected(item);
         }
-
     }
 
     /**
@@ -257,7 +253,6 @@ public class MainActivity extends Activity implements View.OnTouchListener {
      * @param view View
      */
     public void deleteNode(View view) {
-
         try { graph.deleteNode(node); }
         catch (Exception e) {
             e.printStackTrace();
@@ -266,7 +261,6 @@ public class MainActivity extends Activity implements View.OnTouchListener {
 
         dialogNode.dismiss();
         drawableGraph.invalidateSelf();
-
     }
 
     /**
@@ -419,12 +413,10 @@ public class MainActivity extends Activity implements View.OnTouchListener {
                         String nodeName = textInput.getText().toString();
                         node.setThumbnail(nodeName);
                         node.setSize(node.getSize());
-
                     }
                 })
                 .setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int whichButton) {
-
                     }
                 })
                 .show();
@@ -451,7 +443,6 @@ public class MainActivity extends Activity implements View.OnTouchListener {
                 })
                 .setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int whichButton) {
-
                     }
                 })
                 .show();
@@ -473,10 +464,8 @@ public class MainActivity extends Activity implements View.OnTouchListener {
                     e.printStackTrace();
                 }
             }
-
             @Override
             public void onCancel(AmbilWarnaDialog dialog) {
-                //
             }
         });
         dialog.show();
@@ -813,9 +802,10 @@ public class MainActivity extends Activity implements View.OnTouchListener {
             drawableGraph.invalidateSelf();
         }
         */
-        // New version - debugging Android Fatal Signal SIGSEGV
+
+        // Debugging Android Fatal Signal SIGSEGV
+        // Might be serialization issue
         Intent intent = getIntent();
-        //Intent intent = new Intent(new Intent(getBaseContext(), MainActivity.class));
         finish();
         intent.putExtra("fileName", fileName);
         startActivity(intent);
