@@ -43,6 +43,11 @@ import fr.istic.mob.graphcd.utils.GsonManager;
 import fr.istic.mob.graphcd.view.DrawableGraph;
 import yuku.ambilwarna.AmbilWarnaDialog;
 
+/**
+ * Main Activity
+ * @version 1.0.1
+ * @author Charly C, Pierre D
+ */
 public class MainActivity extends Activity implements View.OnTouchListener {
     private DrawableGraph drawableGraph;
     private static Graph graph;
@@ -207,6 +212,9 @@ public class MainActivity extends Activity implements View.OnTouchListener {
             case R.id.save_graph:
                 verifyStoragePermissions(this);
                 GsonManager.saveCurrentGraph(graph);
+                return true;
+            case R.id.zoom_mode:
+                switchToZoomMode();
                 return true;
             case R.id.open_existing_graph:
                 openExistingGraph();
@@ -797,5 +805,29 @@ public class MainActivity extends Activity implements View.OnTouchListener {
         finish();
         intent.putExtra("fileName", fileName);
         startActivity(intent);
+    }
+
+    /**
+     * Switch to Zoom Mode (new activity)
+     */
+    private void switchToZoomMode() {
+        Intent zoomIntent = new Intent(this, ZoomActivity.class);
+        imageView.setDrawingCacheEnabled(true);
+        Bitmap bitmap = Bitmap.createBitmap(imageView.getDrawingCache());
+        try {
+            // Write file
+            String fileName = "bitmap.png";
+            FileOutputStream stream = this.openFileOutput(fileName, Context.MODE_PRIVATE);
+            bitmap.compress(Bitmap.CompressFormat.PNG, 100, stream);
+
+            // Cleanup
+            stream.close();
+            bitmap.recycle();
+
+            zoomIntent.putExtra("image", fileName);
+            startActivity(zoomIntent);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 }

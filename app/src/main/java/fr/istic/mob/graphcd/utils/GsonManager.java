@@ -13,7 +13,6 @@ import java.util.Date;
 
 import fr.istic.mob.graphcd.model.Edge;
 import fr.istic.mob.graphcd.model.Graph;
-import fr.istic.mob.graphcd.model.Loop;
 import fr.istic.mob.graphcd.model.Node;
 
 /**
@@ -24,7 +23,7 @@ import fr.istic.mob.graphcd.model.Node;
 public class GsonManager {
 
     public static final String GRAPH_FILE_EXTENSION = ".gra";
-    public static final String GRAPH_DIRECTORY_NAME = "Graphs";
+    private static final String GRAPH_DIRECTORY_NAME = "Graphs";
 
     /**
      * Save current graph as JSON in external storage
