@@ -4,7 +4,6 @@ import android.app.Activity;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
-import android.os.PersistableBundle;
 import android.widget.Toast;
 
 import com.github.chrisbanes.photoview.PhotoView;
@@ -24,7 +23,7 @@ public class ZoomActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_zoom);
 
-        zoomView = (PhotoView) findViewById(R.id.photo_view);
+        zoomView = findViewById(R.id.photo_view);
 
         if(getIntent().hasExtra("image")) {
             Bitmap bitmap = null;

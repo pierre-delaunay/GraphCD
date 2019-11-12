@@ -123,8 +123,6 @@ public class Edge {
 
         path.moveTo(startingNode.getCoordX(), startingNode.getCoordY());
 
-
-
         if (x == 0 && y == 0) {
             this.path.quadTo(startingNode.getGravityCenter().x, startingNode.getGravityCenter().y
                     , endingNode.getGravityCenter().x, endingNode.getGravityCenter().y);
