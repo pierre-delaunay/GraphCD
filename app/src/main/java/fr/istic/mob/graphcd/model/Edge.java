@@ -16,14 +16,14 @@ public class Edge {
 
     protected Node startingNode, endingNode;
     protected Path path, arrowPath;
-    protected String thumbnail;
-    protected int color, thickness;
-    protected PointF midPoint;
-    protected PathMeasure pathMeasure;
-    protected Region region;
-    protected RectF rectThumbnail;
-    protected int thumbnailSize, thumbnailLength;
     protected float x, y;
+    protected String thumbnail;
+    protected int thumbnailSize, thumbnailLength;
+    protected int color, thickness;
+    protected transient PointF midPoint;
+    protected transient PathMeasure pathMeasure;
+    protected transient Region region;
+    protected transient RectF rectThumbnail;
     public static int MIN_THICKNESS_VALUE = 15;
     public static int MAX_THICKNESS_VALUE = 40;
     public static int DEFAULT_THUMBNAIL_SIZE = 10;
@@ -63,6 +63,14 @@ public class Edge {
     public void setPath(float x, float y) {
         this.x = x;
         this.y = y;
+    }
+
+    public Node getStartingNode() {
+        return startingNode;
+    }
+
+    public Node getEndingNode() {
+        return endingNode;
     }
 
     public String getThumbnail() {
@@ -112,7 +120,10 @@ public class Edge {
         this.region = new Region();
         this.rectThumbnail = new RectF(getMidPoint().x, getMidPoint().y,
                 getMidPoint().x + 15, getMidPoint().y + 15);
+
         path.moveTo(startingNode.getCoordX(), startingNode.getCoordY());
+
+
 
         if (x == 0 && y == 0) {
             this.path.quadTo(startingNode.getGravityCenter().x, startingNode.getGravityCenter().y
@@ -155,5 +166,24 @@ public class Edge {
         this.arrowPath.lineTo(point_x_2, point_y_2);
         this.arrowPath.lineTo(point_x_3, point_y_3);
         this.arrowPath.lineTo(point_x_1, point_y_1);
+    }
+
+    /**
+     * Work in progress
+     * @param edgePath Path
+     * @param rectF RectF
+     */
+    private void intersection(Path edgePath, RectF rectF) {
+        /*
+        Path path = new Path();
+        path.addRoundRect(rectF, 0f,0f, Path.Direction.CW);
+        path.computeBounds(rectF, true);
+        Region region = new Region();
+        region.setPath(path, new Region());
+        PathMeasure pm = new PathMeasure(edgePath,false);
+        float[] point = {0f, 0f};
+        pm.getPosTan(pm.getLength()*mid, point, null);
+        boolean d = region.contains((int) point[0], (int) point[1]);
+        */
     }
 }

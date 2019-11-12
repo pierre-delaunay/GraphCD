@@ -95,6 +95,13 @@ public class Graph {
 
     @Override
     public String toString() {
-        return "Description : " + this.description + ", Nodes : " + this.nodes.size() + ", Edges : " + this.edges.size();
+        int loopCount = 0;
+        for (Edge edge : this.edges) {
+            if (edge instanceof Loop) {
+                loopCount++;
+            }
+        }
+        return "Description : " + this.description + ", Nodes : " + this.nodes.size() + ", Edges : " + this.edges.size()
+                + ", Loops : " + loopCount;
     }
 }

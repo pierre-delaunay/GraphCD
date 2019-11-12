@@ -78,7 +78,8 @@ public class MainActivity extends Activity implements View.OnTouchListener {
 
         if (getIntent().getStringExtra("fileName") != null) {
             String path = getIntent().getStringExtra("fileName");
-            graph = GsonManager.getExistingGraph(path);
+            Graph deserializedGraph = GsonManager.getExistingGraph(path);
+            graph = deserializedGraph;
         } else {
             graph = new Graph("myGraph", width, height);
         }
@@ -792,19 +793,6 @@ public class MainActivity extends Activity implements View.OnTouchListener {
      * @param fileName, path of the graph located in external storage
      */
     private void launchNewGraph(String fileName) {
-        // Previous version
-        /*
-        if (newGraph != null) {
-            graph.clearNodes();
-            graph.clearEdges();
-            graph = newGraph;
-            drawableGraph.setGraph(newGraph);
-            drawableGraph.invalidateSelf();
-        }
-        */
-
-        // Debugging Android Fatal Signal SIGSEGV
-        // Might be serialization issue
         Intent intent = getIntent();
         finish();
         intent.putExtra("fileName", fileName);

@@ -50,7 +50,7 @@ public class Loop extends Edge {
      * Class methods
      */
 
-    private void initLoop() {
+    public void initLoop() {
         super.path = new Path();
         super.arrowPath = new Path();
         super.midPoint = new PointF();

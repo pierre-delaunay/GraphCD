@@ -11,7 +11,10 @@ import java.io.FileOutputStream;
 import java.io.InputStreamReader;
 import java.util.Date;
 
+import fr.istic.mob.graphcd.model.Edge;
 import fr.istic.mob.graphcd.model.Graph;
+import fr.istic.mob.graphcd.model.Loop;
+import fr.istic.mob.graphcd.model.Node;
 
 /**
  * GSON Manager - Graph serialization/deserialization using GSON lib (Java Objects into JSON)
@@ -75,9 +78,19 @@ public class GsonManager {
 
             String json = sb.toString();
             Gson gson = new Gson();
+            Graph deserializedGraph = gson.fromJson(json, Graph.class);
 
-            return gson.fromJson(json, Graph.class);
+            /* Make sure to reinitialize nodes to avoid Android signal 11 / NPE
+             */
+            for (Node node : deserializedGraph.getNodes()) {
+                node.initAfterDeserialization();
+            }
+            for (Edge edge : deserializedGraph.getEdges()) {
+                edge.getStartingNode().initAfterDeserialization();
+                edge.getEndingNode().initAfterDeserialization();
+            }
 
+            return deserializedGraph;
         } catch (Exception e) {
             e.printStackTrace();
         }

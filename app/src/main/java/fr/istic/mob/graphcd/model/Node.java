@@ -16,9 +16,9 @@ public class Node {
     private float coordY;
     private String thumbnail;
     private int color;
-    private RectF rect;
-    private PointF gravityCenter;
     private int size;
+    private transient RectF rect;
+    private transient PointF gravityCenter;
     private static int MIN_NODE_SIZE = 5;
 
     /**
@@ -117,4 +117,34 @@ public class Node {
         this.gravityCenter = gravityCenter;
     }
 
+    /**
+     * GravityCenter was excluded from deserialization
+     * We need to reinstanciate it in order to avoid NPE/Fatal signal
+     */
+    public void initAfterDeserialization() {
+
+        int thumbnailLength = this.getThumbnail().length();
+        int coeffMult;
+
+        if(this.getThumbnail().length() <= MIN_NODE_SIZE) {
+            coeffMult = 8;
+        } else if(this.getThumbnail().length() <= 10) {
+            coeffMult = 12;
+        } else {
+            coeffMult = 15;
+        }
+
+        this.gravityCenter = new PointF();
+
+        this.rect = new RectF(this.coordX - (size + (thumbnailLength*coeffMult) ),
+                this.coordY - size,
+                this.coordX + ( size + (thumbnailLength*coeffMult) ),
+                this.coordY + size);
+
+        this.gravityCenter.x = (this.coordX - (size + (thumbnailLength*coeffMult)) )
+                + ( ((this.coordX + (size + (thumbnailLength*coeffMult)) )
+                - (this.coordX - (size + (thumbnailLength*coeffMult))))/2 );
+        this.gravityCenter.y = (this.coordY - size) + (((this.coordY+size)
+                - (this.coordY-size))/2 );
+    }
 }
