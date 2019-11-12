@@ -68,7 +68,7 @@ public class FileAdapter extends BaseAdapter {
 
     @Override
     public View getView(int index, View convertView, ViewGroup parent) {
-        ViewHolder holder ;
+        ViewHolder holder;
 
         if (convertView == null) {
             holder = new ViewHolder() ;
@@ -79,7 +79,6 @@ public class FileAdapter extends BaseAdapter {
         } else {
             holder = (ViewHolder)convertView.getTag();
         }
-
         holder.imageFile.setId(index);
         holder.imageFile.setClickable(true);
         holder.textFile.setText(filesList.get(index));

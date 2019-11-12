@@ -32,4 +32,5 @@
     <string name="confirm">Êtes-vous sûr ?</string>
     <string name="reinitialize_title">Réinitialiser le graph</string>
     <string name="title_file">Choisir le fichier</string>
+    <string name="content_description">Description</string>
 </resources>

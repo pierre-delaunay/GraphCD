@@ -31,15 +31,7 @@ public class Loop extends Edge {
     /**
      * Accessors and mutators
      */
-
-    public float getRadius() {
-        return radius;
-    }
-
-    public void setRadius(float radius) {
-        this.radius = radius;
-    }
-
+    
     @Override
     public Path getPath(){
         initLoop();
@@ -50,7 +42,7 @@ public class Loop extends Edge {
      * Class methods
      */
 
-    public void initLoop() {
+    private void initLoop() {
         super.path = new Path();
         super.arrowPath = new Path();
         super.midPoint = new PointF();

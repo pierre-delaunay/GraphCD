@@ -8,16 +8,15 @@
     android:orientation="vertical"
     tools:context=".MainActivity">
 
-
     <ImageView
         android:id="@+id/drawableG"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:clickable="true"
-        android:contentDescription="myImageView"
+        android:contentDescription="@string/content_description"
         android:focusable="true"
         android:focusableInTouchMode="true"
-        android:longClickable="true" />
-
+        android:longClickable="true"
+        android:background="#FFFFFFFF"/>
 
 </LinearLayout>

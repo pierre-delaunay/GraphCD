@@ -5,27 +5,28 @@
     android:orientation="horizontal"
     android:padding="5dip">
 
-    <LinearLayout android:id="@+id/lC"
+    <LinearLayout android:id="@+id/linearLayout"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:padding="3dip"
-        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
         android:background="@drawable/back"
-        android:layout_marginRight="5dip">
+        android:layout_marginEnd="5dip">
 
         <ImageView
-            android:id="@+id/color"
+            android:id="@+id/imageView"
             android:layout_width="50dip"
             android:layout_height="50dip"
-            android:src="@drawable/icon_paint" />
+            android:src="@drawable/icon_paint"
+            android:contentDescription="@string/content_description"/>
     </LinearLayout>
 
     <TextView
-        android:id="@+id/Tsup"
+        android:id="@+id/textView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignTop="@+id/lC"
-        android:layout_toRightOf="@+id/lC"
+        android:layout_alignTop="@+id/linearLayout"
+        android:layout_toEndOf="@+id/linearLayout"
         android:text="@string/edit_color"
         android:textColor="@color/colorBlack"
         android:typeface="sans"

@@ -20,7 +20,7 @@ import fr.istic.mob.graphcd.model.Node;
  */
 public class DrawableGraph extends Drawable {
 
-    private Paint backgroundPaint, nodeTextPaint, edgePaint, edgeTextPaint, edgeRectPaint, edgeArrowPaint, tempEdgePaint;
+    private Paint nodeBackgroundPaint, nodeTextPaint, edgePaint, edgeTextPaint, edgeRectPaint, edgeArrowPaint, tempEdgePaint;
     private Graph graph;
     private Drawable mProxy;
     private Path pathToPaint;
@@ -32,11 +32,16 @@ public class DrawableGraph extends Drawable {
     public DrawableGraph(Graph graph) {
         this.graph = graph;
         edgePaint = new Paint();
+        nodeBackgroundPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
         nodeTextPaint = new Paint();
         edgeTextPaint = new Paint();
         tempEdgePaint = new Paint();
         edgeRectPaint = new Paint();
         edgeArrowPaint = new Paint();
+
+        nodeBackgroundPaint.setStyle(Paint.Style.FILL);
+
+        edgePaint.setStyle(Paint.Style.STROKE);
 
         nodeTextPaint.setARGB(200, 255, 255, 255);
         nodeTextPaint.setTextAlign(Paint.Align.CENTER);
@@ -88,15 +93,12 @@ public class DrawableGraph extends Drawable {
     @Override
     public void draw(@NonNull Canvas canvas) {
 
-        backgroundPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
-        backgroundPaint.setStrokeWidth(10);
-
         // Draw edges
         for(Edge edge : graph.getEdges()) {
             pathToPaint = new Path();
             pathToPaint = edge.getPath();
 
-            edgePaint.setStyle(Paint.Style.STROKE);
+
             edgePaint.setStrokeWidth(edge.getThickness());
             edgePaint.setColor(edge.getColor());
 
@@ -107,10 +109,9 @@ public class DrawableGraph extends Drawable {
 
         // Draw nodes
         for (Node node : graph.getNodes()) {
-            backgroundPaint.setStyle(Paint.Style.FILL);
-            backgroundPaint.setColor(node.getColor());
+            nodeBackgroundPaint.setColor(node.getColor());
 
-            canvas.drawRoundRect(node.getRect(), 200,200, backgroundPaint);
+            canvas.drawRoundRect(node.getRect(), 200,200, nodeBackgroundPaint);
             canvas.drawText(node.getThumbnail(), node.getRect().centerX(), node.getRect().centerY(), nodeTextPaint);
         }
     }
