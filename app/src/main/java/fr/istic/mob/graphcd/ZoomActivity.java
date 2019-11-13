@@ -16,14 +16,12 @@ import java.io.FileInputStream;
  */
 public class ZoomActivity extends Activity {
 
-    private PhotoView zoomView;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_zoom);
 
-        zoomView = findViewById(R.id.photo_view);
+        PhotoView zoomView = findViewById(R.id.photo_view);
 
         if(getIntent().hasExtra("image")) {
             Bitmap bitmap = null;

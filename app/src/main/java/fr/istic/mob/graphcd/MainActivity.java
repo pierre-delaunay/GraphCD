@@ -212,6 +212,7 @@ public class MainActivity extends Activity implements View.OnTouchListener {
             case R.id.save_graph:
                 verifyStoragePermissions(this);
                 GsonManager.saveCurrentGraph(graph);
+                Toast.makeText(this, getResources().getString(R.string.save_graph_message), Toast.LENGTH_LONG).show();
                 return true;
             case R.id.zoom_mode:
                 switchToZoomMode();
@@ -492,8 +493,8 @@ public class MainActivity extends Activity implements View.OnTouchListener {
         d.setMessage(R.string.edit_size_message);
         d.setView(dialogView);
         final NumberPicker numberPicker = dialogView.findViewById(R.id.dialog_number_picker);
-        numberPicker.setMaxValue(50);
-        numberPicker.setMinValue(5);
+        numberPicker.setMaxValue(Node.MAX_NODE_SIZE);
+        numberPicker.setMinValue(Node.MIN_NODE_SIZE);
         numberPicker.setWrapSelectorWheel(false);
         numberPicker.setOnValueChangedListener(new NumberPicker.OnValueChangeListener() {
             @Override
@@ -552,6 +553,8 @@ public class MainActivity extends Activity implements View.OnTouchListener {
         graph = new Graph("myGraph", width, height);
         drawableGraph.setGraph(graph);
         drawableGraph.invalidateSelf();
+        // Back to init mode
+        this.currentMode = EditMode.INIT_MODE;
     }
 
     /**

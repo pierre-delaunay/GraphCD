@@ -2,8 +2,6 @@ package fr.istic.mob.graphcd.model;
 
 import android.graphics.PointF;
 import android.graphics.RectF;
-import android.os.Parcel;
-import android.os.Parcelable;
 
 /**
  * Node model
@@ -19,7 +17,8 @@ public class Node {
     private int size;
     private transient RectF rect;
     private transient PointF gravityCenter;
-    private static int MIN_NODE_SIZE = 5;
+    public final static int MIN_NODE_SIZE = 5;
+    public final static int MAX_NODE_SIZE = 50;
 
     /**
      * Constructor 1

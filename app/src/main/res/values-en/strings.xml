@@ -33,6 +33,7 @@
     <string name="reinitialize_title">Graph reinitialize</string>
     <string name="title_file">Select file</string>
     <string name="content_description">Description</string>
+    <string name="save_graph_message">Your graph has been saved successfully</string>
     <string name="zoom_mode">Zoom mode</string>
     <string name="zoom_mode_message">You\'ve entered Zoom Mode, press back to return to Normal Mode</string>
 </resources>
