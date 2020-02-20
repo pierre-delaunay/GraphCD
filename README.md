@@ -7,18 +7,16 @@ UE : Programmation Mobile
 
 ## Fonctionnalités
 
-Récupération du projet sous Eclipse :
-
 ```
-Création de graphs
+- Création de graphs
 
-Personalisation des noeuds/arcs : couleur, nom, taille et épaisseur...
+- Personalisation des noeuds/arcs : couleur, nom, taille et épaisseur...
 
-Sauvegarde de graph
+- Sauvegarde de graph
 
-Partage de graph (messagerie, email)
+- Partage de graph (messagerie, email)
 
-Mode zoom
+- Mode zoom
 
 ```
 
