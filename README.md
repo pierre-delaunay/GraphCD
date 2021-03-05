@@ -10,7 +10,7 @@ UE : Programmation Mobile
 ```
 - Création de graphs
 
-- Personalisation des noeuds/arcs : couleur, nom, taille et épaisseur...
+- Personnalisation des noeuds/arcs : couleur, nom, taille et épaisseur...
 
 - Sauvegarde de graph
 
